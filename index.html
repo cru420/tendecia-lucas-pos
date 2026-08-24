@@ -15,6 +15,7 @@
             --border: #e2e8f0;
             --danger: #ef4444;
             --success: #10b981;
+            --warning: #f59e0b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
@@ -30,11 +31,12 @@
         button { width: 100%; padding: 0.75rem; border: none; border-radius: 6px; background-color: var(--primary); color: white; font-weight: bold; font-size: 1rem; cursor: pointer; }
         button:active { background-color: var(--primary-dark); }
         .btn-danger { background-color: var(--danger); padding: 0.4rem 0.6rem; font-size: 0.8rem; width: auto; }
+        .btn-edit { background-color: var(--primary); padding: 0.4rem 0.6rem; font-size: 0.8rem; width: auto; }
         .btn-success { background-color: var(--success); }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th, td { padding: 0.6rem; border-bottom: 1px solid var(--border); text-align: left; }
+        th, td { padding: 0.6rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
         th { background-color: #f8fafc; color: var(--text-secondary); }
-        .actions-cell { display: flex; gap: 0.3rem; }
+        .actions-cell { display: flex; gap: 0.3rem; flex-direction: column; }
         .ranking-item { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
         .ranking-badge { background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; margin-right: 8px; }
         .ranking-top1 { background: #f59e0b; }
@@ -266,6 +268,20 @@
             });
         };
 
+        window.editStock = function(key) {
+            const currentStock = products[key].stock;
+            const newStockStr = prompt(`Actualizar stock para: ${products[key].name}\nStock actual: ${currentStock}\n\nIngresa la NUEVA cantidad total de stock:`, currentStock);
+            
+            if (newStockStr !== null) {
+                const newStock = parseInt(newStockStr);
+                if (!isNaN(newStock) && newStock >= 0) {
+                    update(ref(db, `products/${key}`), { stock: newStock });
+                } else {
+                    alert('Por favor ingresa un número válido de stock');
+                }
+            }
+        };
+
         window.deleteProduct = function(key) {
             if (confirm('¿Deseas eliminar este producto?')) {
                 remove(ref(db, `products/${key}`));
@@ -294,8 +310,9 @@
                             <span class="price-badge">3-11: $${item.price3}/u</span><br>
                             <span class="price-badge">12+: $${item.price12}/u</span>
                         </td>
-                        <td>${item.stock}</td>
+                        <td><strong>${item.stock}</strong></td>
                         <td class="actions-cell">
+                            <button class="btn-edit" onclick="editStock('${key}')">✏️ Stock</button>
                             <button class="btn-danger" onclick="deleteProduct('${key}')">Eliminar</button>
                         </td>
                     </tr>
