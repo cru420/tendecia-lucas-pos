@@ -51,6 +51,9 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
         .price-badge { font-size: 0.75rem; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
 
+        /* Stock info box */
+        .stock-badge-box { background: #e0e7ff; color: #3730a3; padding: 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.9rem; text-align: center; margin-bottom: 0.75rem; }
+
         /* Estilos del Modal / Ventana Emergente */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
@@ -68,16 +71,42 @@
         <div id="view-sales" class="view active">
             <div class="card">
                 <h2>1. Seleccionar Producto</h2>
-                <div class="form-group">
-                    <label>Producto (Marca - Color - Talla - Stock)</label>
-                    <select id="sale-product-select">
-                        <option value="">Cargando prendas...</option>
-                    </select>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Marca</label>
+                        <input type="text" id="sale-brand" placeholder="Ej. POLO" oninput="checkSaleStock()">
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="text" id="sale-color" placeholder="Ej. BLANCO" oninput="checkSaleStock()">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Cantidad</label>
-                    <input type="number" id="sale-quantity" value="1" min="1">
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Talla</label>
+                        <select id="sale-size" onchange="checkSaleStock()">
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M" selected>M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                            <option value="Única">Única</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad a Vender</label>
+                        <input type="number" id="sale-quantity" value="1" min="1">
+                    </div>
                 </div>
+
+                <!-- Indicador de Stock Disponible -->
+                <div id="stock-info" class="stock-badge-box">
+                    Stock Disponible: --
+                </div>
+
                 <button onclick="addToCart()">Agregar al Carrito</button>
             </div>
 
@@ -108,11 +137,11 @@
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Marca</label>
-                        <input type="text" id="prod-brand" placeholder="Nike, Generico">
+                        <input type="text" id="prod-brand" placeholder="Ej. POLO">
                     </div>
                     <div class="form-group">
                         <label>Color</label>
-                        <input type="text" id="prod-color" placeholder="Negro, Blanco">
+                        <input type="text" id="prod-color" placeholder="Ej. BLANCO">
                     </div>
                 </div>
                 <div class="grid-2">
@@ -259,7 +288,7 @@
         onValue(ref(db, 'products'), (snapshot) => {
             products = snapshot.val() || {};
             renderInventory();
-            renderSelect();
+            checkSaleStock();
             renderTopProducts();
         });
 
@@ -297,6 +326,57 @@
                 document.getElementById('prod-price3').value = '';
                 document.getElementById('prod-price12').value = '';
             });
+        };
+
+        // Buscar producto por Marca, Color y Talla
+        function findProductMatch(brand, color, size) {
+            const cleanBrand = brand.trim().toLowerCase();
+            const cleanColor = color.trim().toLowerCase();
+            const cleanSize = size.trim().toLowerCase();
+
+            for (let key in products) {
+                const item = products[key];
+                const itemBrand = (item.brand || '').trim().toLowerCase();
+                const itemColor = (item.color || '').trim().toLowerCase();
+                const itemSize = (item.size || '').trim().toLowerCase();
+
+                if (itemBrand === cleanBrand && itemColor === cleanColor && itemSize === cleanSize) {
+                    return { key, ...item };
+                }
+            }
+            return null;
+        }
+
+        window.checkSaleStock = function() {
+            const brand = document.getElementById('sale-brand').value;
+            const color = document.getElementById('sale-color').value;
+            const size = document.getElementById('sale-size').value;
+            const stockInfoDiv = document.getElementById('stock-info');
+
+            if (!brand.trim() || !color.trim()) {
+                stockInfoDiv.innerHTML = 'Ingresa Marca y Color';
+                stockInfoDiv.style.background = '#e2e8f0';
+                stockInfoDiv.style.color = '#64748b';
+                return;
+            }
+
+            const matched = findProductMatch(brand, color, size);
+
+            if (matched) {
+                stockInfoDiv.innerHTML = `Stock Disponible: <strong>${matched.stock} unidades</strong>`;
+                if (matched.stock > 0) {
+                    stockInfoDiv.style.background = '#d1fae5';
+                    stockInfoDiv.style.color = '#065f46';
+                } else {
+                    stockInfoDiv.innerHTML = 'Stock Agotado (0 unidades)';
+                    stockInfoDiv.style.background = '#fee2e2';
+                    stockInfoDiv.style.color = '#991b1b';
+                }
+            } else {
+                stockInfoDiv.innerHTML = 'Producto No Encontrado en Inventario';
+                stockInfoDiv.style.background = '#fef3c7';
+                stockInfoDiv.style.color = '#92400e';
+            }
         };
 
         window.openStockModal = function(key) {
@@ -391,43 +471,39 @@
             }
         }
 
-        function renderSelect() {
-            const select = document.getElementById('sale-product-select');
-            select.innerHTML = '<option value="">Selecciona prenda...</option>';
-            for (let key in products) {
-                const item = products[key];
-                if (item.stock > 0) {
-                    const brand = item.brand || 'Generico';
-                    const color = item.color || 'Sin color';
-                    const size = item.size || 'M';
-                    // Formato solicitado: Marca - Color - Talla (Stock: X)
-                    const label = `${brand} - ${color} - Talla: ${size} (Stock: ${item.stock})`;
-                    select.innerHTML += `<option value="${key}">${label}</option>`;
-                }
-            }
-        }
-
         window.addToCart = function() {
-            const select = document.getElementById('sale-product-select');
-            const key = select.value;
+            const brand = document.getElementById('sale-brand').value;
+            const color = document.getElementById('sale-color').value;
+            const size = document.getElementById('sale-size').value;
             const qty = parseInt(document.getElementById('sale-quantity').value);
 
-            if (!key || isNaN(qty) || qty <= 0) return;
-            const prod = products[key];
-
-            if (qty > prod.stock) {
-                alert('No hay suficiente stock disponible');
+            if (!brand.trim() || !color.trim()) {
+                alert('Por favor escribe la Marca y el Color.');
                 return;
             }
 
-            const totalPrice = calculateTotalPrice(qty, prod);
-            const unitPrice = (totalPrice / qty).toFixed(2);
-            const brand = prod.brand || 'Prenda';
-            const color = prod.color || '';
-            const size = prod.size || '';
-            const displayName = `${brand} - ${color} (${size})`;
+            if (isNaN(qty) || qty <= 0) {
+                alert('Ingresa una cantidad válida.');
+                return;
+            }
 
-            cart.push({ key, name: displayName, unitPrice: parseFloat(unitPrice), totalPrice, qty });
+            const matched = findProductMatch(brand, color, size);
+
+            if (!matched) {
+                alert('No existe un producto registrado con esa Marca, Color y Talla.');
+                return;
+            }
+
+            if (qty > matched.stock) {
+                alert(`No hay suficiente stock. Disponible: ${matched.stock}`);
+                return;
+            }
+
+            const totalPrice = calculateTotalPrice(qty, matched);
+            const unitPrice = (totalPrice / qty).toFixed(2);
+            const displayName = `${matched.brand} - ${matched.color} (${matched.size})`;
+
+            cart.push({ key: matched.key, name: displayName, unitPrice: parseFloat(unitPrice), totalPrice, qty });
             renderCart();
         };
 
@@ -481,6 +557,9 @@
             update(ref(db), updates).then(() => {
                 cart = [];
                 renderCart();
+                document.getElementById('sale-brand').value = '';
+                document.getElementById('sale-color').value = '';
+                checkSaleStock();
                 alert('¡Venta realizada con éxito!');
             });
         };
