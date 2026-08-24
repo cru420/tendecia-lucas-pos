@@ -87,6 +87,7 @@
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
         th, td { padding: 0.6rem; border-bottom: 1px solid var(--border); }
         th { background-color: #f8fafc; color: var(--text-secondary); }
+        .actions-cell { display: flex; gap: 0.3rem; }
     </style>
 </head>
 <body>
@@ -272,10 +273,7 @@
     </nav>
 
     <script>
-        let inventory = JSON.parse(localStorage.getItem('pos_inventory_custom')) || [
-            { id: 1, name: 'Camiseta Algodón', size: 'M', color: 'Negro', stock: 20, p1: 85, p2: 160, p3: 75, p4: 40 }
-        ];
-
+        let inventory = JSON.parse(localStorage.getItem('pos_inventory_custom')) || [];
         let sales = JSON.parse(localStorage.getItem('pos_sales_custom')) || [];
         let cart = [];
 
@@ -474,9 +472,26 @@
             }
         }
 
+        function deleteProduct(id) {
+            const item = inventory.find(i => i.id === id);
+            if (!item) return;
+            
+            if (confirm(`¿Estás seguro de que quieres eliminar "${item.name} (${item.size}/${item.color})" del inventario?`)) {
+                inventory = inventory.filter(i => i.id !== id);
+                saveState();
+                renderAll();
+            }
+        }
+
         function renderInventoryTable() {
             const tbody = document.getElementById('inventory-table-body');
             tbody.innerHTML = '';
+            
+            if (inventory.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-secondary); padding: 1rem;">No hay productos guardados en el inventario.</td></tr>';
+                return;
+            }
+
             inventory.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -488,7 +503,10 @@
                     <td>$${item.p3}/u</td>
                     <td>$${item.p4}/u</td>
                     <td>
-                        <button class="btn btn-sm" onclick="editStock(${item.id})">✏️ Editar Stock</button>
+                        <div class="actions-cell">
+                            <button class="btn btn-sm" onclick="editStock(${item.id})">✏️ Stock</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${item.id})">🗑️ Borrar</button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
