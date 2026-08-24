@@ -2,24 +2,33 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POS Móvil - Mi Tienda</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
             --bg: #f8fafc;
             --surface: #ffffff;
             --text: #0f172a;
-            --text-secondary: #475569;
+            --text-secondary: #64748b;
             --border: #e2e8f0;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --accent: #f59e0b;
+            --danger: #ef4444;
+            --success: #10b981;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 70px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 80px;
+        }
 
         header {
             background-color: var(--surface);
@@ -27,576 +36,486 @@
             padding: 1rem;
             position: sticky;
             top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            z-index: 10;
         }
 
-        header h1 { font-size: 1.25rem; color: var(--primary); }
-
-        .nav-tabs {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--surface); display: flex;
-            border-top: 1px solid var(--border); z-index: 100;
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
         }
 
-        .nav-btn {
-            flex: 1; padding: 0.75rem 0.5rem; border: none; background: none;
-            color: var(--text-secondary); font-size: 0.8rem; font-weight: 600;
-            display: flex; flex-direction: column; align-items: center; gap: 0.25rem; cursor: pointer;
+        main {
+            padding: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
-
-        .nav-btn.active { color: var(--primary); border-top: 3px solid var(--primary); }
-        .container { max-width: 900px; margin: 0 auto; padding: 1rem; }
-        .section { display: none; }
-        .section.active { display: block; }
 
         .card {
-            background: var(--surface); border-radius: 12px;
-            border: 1px solid var(--border); padding: 1rem; margin-bottom: 1rem;
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .form-group { margin-bottom: 0.75rem; }
-        label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.25rem; }
-        select, input { width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; }
-
-        .price-tiers {
-            background: #f1f5f9; border-radius: 8px; padding: 0.5rem;
-            font-size: 0.75rem; display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 0.25rem; text-align: center; margin-top: 0.5rem;
+        h2 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
         }
-        .price-tier-item strong { display: block; color: var(--primary); }
 
-        .btn {
-            background: var(--primary); color: white; border: none; padding: 0.75rem 1rem;
-            border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; width: 100%;
+        .form-group {
+            margin-bottom: 0.75rem;
         }
-        .btn-sm { padding: 0.3rem 0.6rem; font-size: 0.8rem; width: auto; }
-        .btn-success { background: var(--success); }
-        .btn-danger { background: var(--danger); }
 
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
-        .cart-total { font-size: 1.3rem; font-weight: 800; display: flex; justify-content: space-between; margin: 1rem 0; padding-top: 0.5rem; border-top: 2px dashed var(--border); }
-        
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
-        .metric-card { background: var(--surface); border: 1px solid var(--border); padding: 1.25rem; border-radius: 12px; text-align: center; }
-        .metric-value { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
 
-        .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
-        th, td { padding: 0.6rem; border-bottom: 1px solid var(--border); }
-        th { background-color: #f8fafc; color: var(--text-secondary); }
-        .actions-cell { display: flex; gap: 0.3rem; }
+        input, select {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+        }
 
-        /* Estilos para el Ranking */
-        .ranking-item { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
-        .ranking-badge { background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; margin-right: 8px; }
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:active {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+            width: auto;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.6rem;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--text-secondary);
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .ranking-badge {
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
         .ranking-top1 { background: #f59e0b; }
         .ranking-top2 { background: #64748b; }
         .ranking-top3 { background: #b45309; }
+
+        .nav-tabs {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            display: flex;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            border-radius: 0;
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            border-top: 2px solid var(--primary);
+        }
+
+        .view { display: none; }
+        .view.active { display: block; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🛍️ POS Móvil - Mi Tienda</h1>
-        <span id="datetime" style="font-size: 0.75rem; color: var(--text-secondary);"></span>
+        <div class="header-title">POS Tienda</div>
     </header>
 
-    <div class="container">
-
-        <!-- VENTAS -->
-        <section id="sec-pos" class="section active">
+    <main>
+        <!-- VENTA -->
+        <div id="view-sales" class="view active">
             <div class="card">
                 <h2>1. Seleccionar Producto</h2>
-                <br>
                 <div class="form-group">
                     <label>Producto</label>
-                    <select id="pos-product-select" onchange="updateVariantOptions()">
-                        <option value="">-- Selecciona Producto --</option>
+                    <select id="sale-product-select">
+                        <option value="">Cargando productos...</option>
                     </select>
                 </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <div class="form-group" style="flex: 1;">
-                        <label>Talla</label>
-                        <select id="pos-size-select" onchange="calculateTotalPrice()"></select>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Color</label>
-                        <select id="pos-color-select" onchange="calculateTotalPrice()"></select>
-                    </div>
-                </div>
                 <div class="form-group">
-                    <label>Cantidad (Stock: <span id="pos-stock-display">-</span>)</label>
-                    <input type="number" id="pos-qty-input" value="1" min="1" oninput="calculateTotalPrice()">
+                    <label>Cantidad</label>
+                    <input type="number" id="sale-quantity" value="1" min="1">
                 </div>
-
-                <div class="price-tiers">
-                    <div class="price-tier-item">1 ud<strong id="tier-1">$0</strong></div>
-                    <div class="price-tier-item">2 uds<strong id="tier-2">$0</strong></div>
-                    <div class="price-tier-item">3-11 uds<strong id="tier-3">$0/ud</strong></div>
-                    <div class="price-tier-item">12+ uds<strong id="tier-4">$0/ud</strong></div>
-                </div>
-                <br>
-                <div style="text-align: right; margin-bottom: 0.5rem;">
-                    Subtotal Calculado: <strong id="total-price-display" style="color: var(--primary); font-size: 1.2rem;">$0.00</strong>
-                </div>
-
-                <button class="btn" onclick="addToCart()">➕ Agregar a la Venta</button>
+                <button onclick="addToCart()">Agregar al Carrito</button>
             </div>
 
             <div class="card">
-                <h2>🛒 Carrito de Compra</h2>
-                <div id="cart-items-container" style="margin-top: 0.5rem;">
-                    <p style="color: var(--text-secondary); text-align: center; padding: 1rem;">No hay productos en el carrito</p>
-                </div>
-
-                <div class="cart-total">
-                    <span>Total del Pedido:</span>
-                    <span id="cart-total-display">$0.00</span>
-                </div>
-
-                <button class="btn btn-success" onclick="processSale()">✅ Registrar Venta</button>
+                <h2>2. Detalle de Venta</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Prod</th>
+                            <th>Cant</th>
+                            <th>Subt</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-list"></tbody>
+                </table>
+                <h3 style="margin-top: 1rem; text-align: right;">Total: $<span id="cart-total">0.00</span></h3>
+                <br>
+                <button class="btn-success" onclick="completeSale()">Registrar Venta</button>
             </div>
-        </section>
+        </div>
 
         <!-- INVENTARIO -->
-        <section id="sec-inventory" class="section">
+        <div id="view-inventory" class="view">
             <div class="card">
-                <h2>➕ Registrar Producto Nuevo</h2>
-                <br>
-                <form id="add-product-form" onsubmit="handleAddProduct(event)">
-                    <div class="form-group">
-                        <label>Nombre del Producto</label>
-                        <input type="text" id="new-name" placeholder="Ej. Camiseta" required>
-                    </div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <div class="form-group" style="flex:1;">
-                            <label>Talla</label>
-                            <select id="new-size">
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
-                                <option value="XXL">XXL</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="flex:1;">
-                            <label>Color</label>
-                            <input type="text" id="new-color" placeholder="Ej. Rojo, Verde..." required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Stock Inicial</label>
-                        <input type="number" id="new-stock" value="10" min="0" required>
-                    </div>
-
-                    <label style="margin-top:0.5rem; color: var(--primary);">💰 Configuración Personalizada de Precios</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.25rem;">
-                        <div>
-                            <label style="font-weight:normal;">Precio x 1 ud ($)</label>
-                            <input type="number" step="0.01" id="p1" placeholder="Ej. 85" required>
-                        </div>
-                        <div>
-                            <label style="font-weight:normal;">Precio Total x 2 uds ($)</label>
-                            <input type="number" step="0.01" id="p2" placeholder="Ej. 160" required>
-                        </div>
-                        <div>
-                            <label style="font-weight:normal;">Precio x ud (3 a 11 uds) ($)</label>
-                            <input type="number" step="0.01" id="p3" placeholder="Ej. 75" required>
-                        </div>
-                        <div>
-                            <label style="font-weight:normal;">Precio x ud (12+ uds) ($)</label>
-                            <input type="number" step="0.01" id="p4" placeholder="Ej. 40" required>
-                        </div>
-                    </div>
-                    <br>
-                    <button type="submit" class="btn">Guardar en Inventario</button>
-                </form>
+                <h2>Nuevo Producto</h2>
+                <div class="form-group">
+                    <label>Nombre del Producto</label>
+                    <input type="text" id="prod-name" placeholder="Ej. Polera Lucas">
+                </div>
+                <div class="form-group">
+                    <label>Precio ($)</label>
+                    <input type="number" id="prod-price" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Stock Inicial</label>
+                    <input type="number" id="prod-stock">
+                </div>
+                <button onclick="addProduct()">Guardar Producto</button>
             </div>
 
             <div class="card">
-                <h2>📦 Inventario Registrado</h2>
-                <br>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Talla/Color</th>
-                                <th>Stock</th>
-                                <th>1 ud</th>
-                                <th>2 uds</th>
-                                <th>3-11 ud</th>
-                                <th>12+ ud</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inventory-table-body"></tbody>
-                    </table>
-                </div>
+                <h2>Inventario Actual</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-list"></tbody>
+                </table>
             </div>
-        </section>
+        </div>
 
-        <!-- REPORTES Y RANKING -->
-        <section id="sec-reports" class="section">
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <label>Total Vendido Hoy</label>
-                    <div class="metric-value" id="today-total-val">$0.00</div>
-                </div>
-                <div class="metric-card">
-                    <label>Ventas Realizadas</label>
-                    <div class="metric-value" id="today-count-val">0</div>
-                </div>
-            </div>
-
-            <!-- RANKING PRODUCTOS MÁS VENDIDOS -->
+        <!-- REPORTES / RANKING -->
+        <div id="view-reports" class="view">
             <div class="card">
                 <h2>🏆 Productos Más Vendidos</h2>
-                <br>
-                <div id="top-products-container">
-                    <p style="color: var(--text-secondary); text-align: center; padding: 0.5rem;">Aún no hay ventas registradas.</p>
-                </div>
+                <div id="top-products-list"></div>
             </div>
 
             <div class="card">
-                <h2>🧾 Historial del Día</h2>
-                <br>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Hora</th>
-                                <th>Detalle</th>
-                                <th>Cant.</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sales-history-body"></tbody>
-                    </table>
-                </div>
+                <h2>Historial de Ventas</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-history-list"></tbody>
+                </table>
             </div>
-        </section>
-
-    </div>
+        </div>
+    </main>
 
     <nav class="nav-tabs">
-        <button class="nav-btn active" onclick="switchTab('pos', this)"><span>🛒</span><span>Vender</span></button>
-        <button class="nav-btn" onclick="switchTab('inventory', this)"><span>📦</span><span>Inventario</span></button>
-        <button class="nav-btn" onclick="switchTab('reports', this)"><span>📊</span><span>Ventas Hoy</span></button>
+        <button class="nav-tab active" onclick="switchTab('sales', this)">Vender</button>
+        <button class="nav-tab" onclick="switchTab('inventory', this)">Inventario</button>
+        <button class="nav-tab" onclick="switchTab('reports', this)">Reportes</button>
     </nav>
 
-    <script>
-        let inventory = JSON.parse(localStorage.getItem('pos_inventory_custom')) || [];
-        let sales = JSON.parse(localStorage.getItem('pos_sales_custom')) || [];
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDfeSkWBfmGFcZRqPtbWji6ZHrZ-xa1Qg0",
+            authDomain: "tendencialucaspos.firebaseapp.com",
+            databaseURL: "https://tendencialucaspos-default-rtdb.firebaseio.com",
+            projectId: "tendencialucaspos",
+            storageBucket: "tendencialucaspos.firebasestorage.app",
+            messagingSenderId: "49220624332",
+            appId: "1:49220624332:web:126b39ee0668987631c769"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let products = {};
+        let sales = {};
         let cart = [];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            saveState();
-            renderAll();
-            document.getElementById('datetime').innerText = new Date().toLocaleDateString('es-ES');
+        // Escuchar Inventario en Tiempo Real
+        onValue(ref(db, 'products'), (snapshot) => {
+            products = snapshot.val() || {};
+            renderInventory();
+            renderSelect();
+            renderTopProducts();
         });
 
-        function saveState() {
-            localStorage.setItem('pos_inventory_custom', JSON.stringify(inventory));
-            localStorage.setItem('pos_sales_custom', JSON.stringify(sales));
-        }
+        // Escuchar Ventas en Tiempo Real
+        onValue(ref(db, 'sales'), (snapshot) => {
+            sales = snapshot.val() || {};
+            renderSalesHistory();
+            renderTopProducts();
+        });
 
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('sec-' + tabId).classList.add('active');
-            btn.classList.add('active');
-            renderAll();
-        }
+        window.addProduct = function() {
+            const name = document.getElementById('prod-name').value;
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const stock = parseInt(document.getElementById('prod-stock').value);
 
-        function renderAll() {
-            renderInventoryTable();
-            populateProductDropdown();
-            renderCart();
-            renderReports();
-        }
-
-        function populateProductDropdown() {
-            const select = document.getElementById('pos-product-select');
-            select.innerHTML = '<option value="">-- Selecciona Producto --</option>';
-            const uniqueNames = [...new Set(inventory.map(item => item.name))];
-            uniqueNames.forEach(name => {
-                select.appendChild(new Option(name, name));
-            });
-            updateVariantOptions();
-        }
-
-        function updateVariantOptions() {
-            const name = document.getElementById('pos-product-select').value;
-            const sizeSelect = document.getElementById('pos-size-select');
-            const colorSelect = document.getElementById('pos-color-select');
-
-            sizeSelect.innerHTML = ''; colorSelect.innerHTML = '';
-
-            if (!name) {
-                document.getElementById('pos-stock-display').innerText = '-';
-                calculateTotalPrice();
+            if (!name || isNaN(price) || isNaN(stock)) {
+                alert('Por favor completa todos los campos');
                 return;
             }
 
-            const items = inventory.filter(i => i.name === name);
-            [...new Set(items.map(i => i.size))].forEach(s => sizeSelect.appendChild(new Option(s, s)));
-            [...new Set(items.map(i => i.color))].forEach(c => colorSelect.appendChild(new Option(c, c)));
-
-            calculateTotalPrice();
-        }
-
-        function getSelectedVariant() {
-            const name = document.getElementById('pos-product-select').value;
-            const size = document.getElementById('pos-size-select').value;
-            const color = document.getElementById('pos-color-select').value;
-            return inventory.find(i => i.name === name && i.size === size && i.color === color);
-        }
-
-        function calculateTotalPrice() {
-            const variant = getSelectedVariant();
-            const qty = parseInt(document.getElementById('pos-qty-input').value) || 1;
-
-            if (!variant) {
-                document.getElementById('total-price-display').innerText = '$0.00';
-                document.getElementById('pos-stock-display').innerText = '-';
-                return 0;
-            }
-
-            document.getElementById('pos-stock-display').innerText = variant.stock;
-            document.getElementById('tier-1').innerText = '$' + variant.p1;
-            document.getElementById('tier-2').innerText = '$' + variant.p2;
-            document.getElementById('tier-3').innerText = '$' + variant.p3 + '/ud';
-            document.getElementById('tier-4').innerText = '$' + variant.p4 + '/ud';
-
-            let totalPrice = 0;
-            if (qty === 1) {
-                totalPrice = variant.p1;
-            } else if (qty === 2) {
-                totalPrice = variant.p2;
-            } else if (qty >= 3 && qty <= 11) {
-                totalPrice = qty * variant.p3;
-            } else if (qty >= 12) {
-                totalPrice = qty * variant.p4;
-            }
-
-            document.getElementById('total-price-display').innerText = '$' + totalPrice.toFixed(2);
-            return totalPrice;
-        }
-
-        function addToCart() {
-            const variant = getSelectedVariant();
-            const qty = parseInt(document.getElementById('pos-qty-input').value) || 0;
-
-            if (!variant || qty <= 0) return alert('Selecciona cantidad válida');
-            if (qty > variant.stock) return alert('Stock insuficiente (' + variant.stock + ' disponibles)');
-
-            const totalCalculated = calculateTotalPrice();
-            cart.push({
-                variantId: variant.id,
-                name: variant.name,
-                size: variant.size,
-                color: variant.color,
-                qty: qty,
-                total: totalCalculated
+            const newProdRef = push(ref(db, 'products'));
+            set(newProdRef, { name, price, stock }).then(() => {
+                document.getElementById('prod-name').value = '';
+                document.getElementById('prod-price').value = '';
+                document.getElementById('prod-stock').value = '';
             });
+        };
 
-            renderCart();
+        window.deleteProduct = function(key) {
+            if (confirm('¿Deseas eliminar este producto?')) {
+                remove(ref(db, `products/${key}`));
+            }
+        };
+
+        function renderInventory() {
+            const list = document.getElementById('inventory-list');
+            list.innerHTML = '';
+            for (let key in products) {
+                const item = products[key];
+                list.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                        <td>${item.stock}</td>
+                        <td class="actions-cell">
+                            <button class="btn-danger" onclick="deleteProduct('${key}')">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            }
         }
+
+        function renderSelect() {
+            const select = document.getElementById('sale-product-select');
+            select.innerHTML = '<option value="">Selecciona prenda...</option>';
+            for (let key in products) {
+                const item = products[key];
+                if (item.stock > 0) {
+                    select.innerHTML += `<option value="${key}">${item.name} ($${item.price}) - Stock: ${item.stock}</option>`;
+                }
+            }
+        }
+
+        window.addToCart = function() {
+            const select = document.getElementById('sale-product-select');
+            const key = select.value;
+            const qty = parseInt(document.getElementById('sale-quantity').value);
+
+            if (!key || isNaN(qty) || qty <= 0) return;
+            const prod = products[key];
+
+            if (qty > prod.stock) {
+                alert('No hay suficiente stock');
+                return;
+            }
+
+            cart.push({ key, name: prod.name, price: prod.price, qty });
+            renderCart();
+        };
 
         function renderCart() {
-            const container = document.getElementById('cart-items-container');
-            if (cart.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 1rem;">No hay productos en el carrito</p>';
-                document.getElementById('cart-total-display').innerText = '$0.00';
-                return;
-            }
-
-            container.innerHTML = '';
-            let grandTotal = 0;
+            const list = document.getElementById('cart-list');
+            list.innerHTML = '';
+            let total = 0;
 
             cart.forEach((item, index) => {
-                grandTotal += item.total;
-                const div = document.createElement('div');
-                div.className = 'cart-item';
-                div.innerHTML = `
-                    <div>
-                        <strong>${item.name} (${item.size}/${item.color})</strong>
-                        <div style="font-size:0.8rem; color:var(--text-secondary);">${item.qty} uds</div>
-                    </div>
-                    <div style="font-weight:700;">$${item.total.toFixed(2)}</div>
-                    <button class="btn btn-danger btn-sm" onclick="removeFromCart(${index})">✕</button>
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+                list.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.qty}</td>
+                        <td>$${subtotal.toFixed(2)}</td>
+                        <td><button class="btn-danger" onclick="removeFromCart(${index})">X</button></td>
+                    </tr>
                 `;
-                container.appendChild(div);
             });
 
-            document.getElementById('cart-total-display').innerText = '$' + grandTotal.toFixed(2);
+            document.getElementById('cart-total').innerText = total.toFixed(2);
         }
 
-        function removeFromCart(index) { cart.splice(index, 1); renderCart(); }
+        window.removeFromCart = function(index) {
+            cart.splice(index, 1);
+            renderCart();
+        };
 
-        function processSale() {
-            if (cart.length === 0) return alert('Carrito vacío');
+        window.completeSale = function() {
+            if (cart.length === 0) return;
+
+            const updates = {};
+            let totalAmount = 0;
+            const itemsSold = [];
 
             cart.forEach(item => {
-                const invItem = inventory.find(i => i.id === item.variantId);
-                if (invItem) invItem.stock -= item.qty;
-                sales.push({
-                    date: new Date().toISOString(),
-                    item: `${item.name} (${item.size}/${item.color})`,
-                    qty: item.qty,
-                    total: item.total
-                });
+                const newStock = products[item.key].stock - item.qty;
+                updates[`products/${item.key}/stock`] = newStock;
+                totalAmount += item.price * item.qty;
+                itemsSold.push({ name: item.name, qty: item.qty, price: item.price });
             });
 
-            cart = [];
-            saveState();
-            renderAll();
-            alert('🎉 Venta registrada');
-        }
+            const newSaleRef = push(ref(db, 'sales'));
+            updates[`sales/${newSaleRef.key}`] = {
+                date: new Date().toLocaleString(),
+                total: totalAmount,
+                items: itemsSold
+            };
 
-        function handleAddProduct(e) {
-            e.preventDefault();
-            inventory.push({
-                id: Date.now(),
-                name: document.getElementById('new-name').value,
-                size: document.getElementById('new-size').value,
-                color: document.getElementById('new-color').value,
-                stock: parseInt(document.getElementById('new-stock').value),
-                p1: parseFloat(document.getElementById('p1').value),
-                p2: parseFloat(document.getElementById('p2').value),
-                p3: parseFloat(document.getElementById('p3').value),
-                p4: parseFloat(document.getElementById('p4').value)
+            update(ref(db), updates).then(() => {
+                cart = [];
+                renderCart();
+                alert('¡Venta realizada con éxito!');
             });
-            saveState();
-            renderAll();
-            document.getElementById('add-product-form').reset();
-            alert('Producto Guardado');
-        }
+        };
 
-        function editStock(id) {
-            const item = inventory.find(i => i.id === id);
-            if (!item) return;
-            const newStock = prompt(`Ingresa la nueva cantidad total en stock para ${item.name} (${item.size}/${item.color}):`, item.stock);
-            if (newStock !== null && !isNaN(newStock) && newStock.trim() !== '') {
-                item.stock = parseInt(newStock);
-                saveState();
-                renderAll();
-            }
-        }
-
-        function deleteProduct(id) {
-            const item = inventory.find(i => i.id === id);
-            if (!item) return;
-            
-            if (confirm(`¿Estás seguro de que quieres eliminar "${item.name} (${item.size}/${item.color})" del inventario?`)) {
-                inventory = inventory.filter(i => i.id !== id);
-                saveState();
-                renderAll();
-            }
-        }
-
-        function renderInventoryTable() {
-            const tbody = document.getElementById('inventory-table-body');
-            tbody.innerHTML = '';
-            
-            if (inventory.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-secondary); padding: 1rem;">No hay productos guardados en el inventario.</td></tr>';
-                return;
-            }
-
-            inventory.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${item.name}</strong></td>
-                    <td>${item.size} / ${item.color}</td>
-                    <td><strong>${item.stock}</strong></td>
-                    <td>$${item.p1}</td>
-                    <td>$${item.p2}</td>
-                    <td>$${item.p3}/u</td>
-                    <td>$${item.p4}/u</td>
-                    <td>
-                        <div class="actions-cell">
-                            <button class="btn btn-sm" onclick="editStock(${item.id})">✏️ Stock</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${item.id})">🗑️ Borrar</button>
-                        </div>
-                    </td>
+        function renderSalesHistory() {
+            const list = document.getElementById('sales-history-list');
+            list.innerHTML = '';
+            for (let key in sales) {
+                const sale = sales[key];
+                list.innerHTML += `
+                    <tr>
+                        <td>${sale.date}</td>
+                        <td>$${sale.total.toFixed(2)}</td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderReports() {
-            const todayStr = new Date().toISOString().split('T')[0];
-            const todaySales = sales.filter(s => s.date.startsWith(todayStr));
-
-            const totalSum = todaySales.reduce((acc, s) => acc + s.total, 0);
-            document.getElementById('today-total-val').innerText = '$' + totalSum.toFixed(2);
-            document.getElementById('today-count-val').innerText = todaySales.length;
-
-            // Renderizar Historial
-            const tbody = document.getElementById('sales-history-body');
-            tbody.innerHTML = '';
-            [...todaySales].reverse().forEach(s => {
-                const time = new Date(s.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${time}</td>
-                    <td>${s.item}</td>
-                    <td>${s.qty}</td>
-                    <td><strong>$${s.total.toFixed(2)}</strong></td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            // Renderizar Ranking de Más Vendidos
-            renderTopProducts();
+            }
         }
 
         function renderTopProducts() {
-            const container = document.getElementById('top-products-container');
+            const productTotals = {};
+
+            for (let key in sales) {
+                const sale = sales[key];
+                if (sale.items) {
+                    sale.items.forEach(item => {
+                        productTotals[item.name] = (productTotals[item.name] || 0) + item.qty;
+                    });
+                }
+            }
+
+            const sorted = Object.entries(productTotals).sort((a, b) => b[1] - a[1]);
+            const container = document.getElementById('top-products-list');
             container.innerHTML = '';
 
-            if (sales.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 0.5rem;">Aún no hay ventas registradas.</p>';
+            if (sorted.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-secondary);">Aún no hay ventas registradas.</p>';
                 return;
             }
 
-            // Agrupar ventas por producto
-            const counts = {};
-            sales.forEach(s => {
-                counts[s.item] = (counts[s.item] || 0) + s.qty;
-            });
+            sorted.slice(0, 5).forEach(([name, qty], index) => {
+                let badgeClass = '';
+                if (index === 0) badgeClass = 'ranking-top1';
+                else if (index === 1) badgeClass = 'ranking-top2';
+                else if (index === 2) badgeClass = 'ranking-top3';
 
-            // Ordenar de mayor a menor
-            const sorted = Object.keys(counts)
-                .map(item => ({ item, qty: counts[item] }))
-                .sort((a, b) => b.qty - a.qty);
-
-            // Mostrar los mejores resultados
-            sorted.forEach((prod, idx) => {
-                let badgeClass = 'ranking-badge';
-                if (idx === 0) badgeClass += ' ranking-top1';
-                else if (idx === 1) badgeClass += ' ranking-top2';
-                else if (idx === 2) badgeClass += ' ranking-top3';
-
-                const div = document.createElement('div');
-                div.className = 'ranking-item';
-                div.innerHTML = `
-                    <div style="display: flex; align-items: center;">
-                        <span class="${badgeClass}">${idx + 1}</span>
-                        <strong>${prod.item}</strong>
-                    </div>
-                    <div style="font-weight: 700; color: var(--primary);">
-                        ${prod.qty} ${prod.qty === 1 ? 'unidad' : 'unidades'}
+                container.innerHTML += `
+                    <div class="ranking-item">
+                        <div>
+                            <span class="ranking-badge ${badgeClass}">${index + 1}</span>
+                            <strong>${name}</strong>
+                        </div>
+                        <div><strong>${qty}</strong> unid.</div>
                     </div>
                 `;
-                container.appendChild(div);
             });
         }
+
+        window.switchTab = function(tabName, element) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+            document.getElementById(`view-${tabName}`).classList.add('active');
+            element.classList.add('active');
+        };
     </script>
 </body>
 </html>
