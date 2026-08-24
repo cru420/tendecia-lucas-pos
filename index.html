@@ -32,6 +32,7 @@
         button:active { background-color: var(--primary-dark); }
         .btn-danger { background-color: var(--danger); padding: 0.4rem 0.6rem; font-size: 0.8rem; width: auto; }
         .btn-edit { background-color: var(--primary); padding: 0.4rem 0.6rem; font-size: 0.8rem; width: auto; }
+        .btn-warning { background-color: var(--warning); padding: 0.4rem 0.6rem; font-size: 0.8rem; width: auto; color: white; }
         .btn-secondary { background-color: #64748b; padding: 0.5rem; font-size: 0.85rem; }
         .btn-success { background-color: var(--success); }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
@@ -51,13 +52,16 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
         .price-badge { font-size: 0.75rem; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
 
+        /* Estilos del Historial de Ventas */
+        .sale-item-detail { font-size: 0.8rem; color: var(--text-secondary); margin-top: 3px; }
+
         /* Stock info box */
         .stock-badge-box { background: #e0e7ff; color: #3730a3; padding: 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.9rem; text-align: center; margin-bottom: 0.75rem; }
 
         /* Estilos del Modal / Ventana Emergente */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
-        .modal-content { background: white; padding: 1.5rem; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .modal-content { background: white; padding: 1.5rem; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -218,7 +222,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Fecha</th>
+                            <th>Fecha y Detalle</th>
                             <th>Total</th>
                         </tr>
                     </thead>
@@ -252,6 +256,72 @@
             <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                 <button class="btn-success" onclick="confirmStockUpdate()">Guardar Stock</button>
                 <button class="btn-secondary" onclick="closeStockModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VENTANA EMERGENTE (MODAL) PARA EDITAR PRODUCTO COMPLETO -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 1rem;">Editar Producto</h3>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Marca</label>
+                    <input type="text" id="edit-brand">
+                </div>
+                <div class="form-group">
+                    <label>Color</label>
+                    <input type="text" id="edit-color">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Talla</label>
+                    <select id="edit-size">
+                        <option value="XS">XS</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                        <option value="Única">Única / Estándar</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <input type="number" id="edit-stock">
+                </div>
+            </div>
+
+            <hr style="margin: 0.75rem 0; border: none; border-top: 1px solid var(--border);">
+            <p style="font-weight: bold; font-size: 0.85rem; margin-bottom: 0.5rem;">Precios ($)</p>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>1 Unid ($)</label>
+                    <input type="number" id="edit-price1" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>2 Unid Total ($)</label>
+                    <input type="number" id="edit-price2" step="0.01">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>3 a 11 Unid ($)</label>
+                    <input type="number" id="edit-price3" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>12+ Unid ($)</label>
+                    <input type="number" id="edit-price12" step="0.01">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <button class="btn-success" onclick="confirmProductEdit()">Guardar Cambios</button>
+                <button class="btn-secondary" onclick="closeEditModal()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -429,6 +499,58 @@
             });
         };
 
+        // --- FUNCIONES DE EDICIÓN DE PRODUCTO ---
+        window.openEditModal = function(key) {
+            activeProductKey = key;
+            const prod = products[key];
+
+            document.getElementById('edit-brand').value = prod.brand || '';
+            document.getElementById('edit-color').value = prod.color || '';
+            document.getElementById('edit-size').value = prod.size || 'M';
+            document.getElementById('edit-stock').value = prod.stock ?? 0;
+            document.getElementById('edit-price1').value = prod.price1 ?? '';
+            document.getElementById('edit-price2').value = prod.price2 ?? '';
+            document.getElementById('edit-price3').value = prod.price3 ?? '';
+            document.getElementById('edit-price12').value = prod.price12 ?? '';
+
+            document.getElementById('edit-modal').classList.add('active');
+        };
+
+        window.closeEditModal = function() {
+            document.getElementById('edit-modal').classList.remove('active');
+            activeProductKey = null;
+        };
+
+        window.confirmProductEdit = function() {
+            if (!activeProductKey) return;
+
+            const brand = document.getElementById('edit-brand').value.trim() || 'Generico';
+            const color = document.getElementById('edit-color').value.trim() || 'Sin Color';
+            const size = document.getElementById('edit-size').value || 'M';
+            const stock = parseInt(document.getElementById('edit-stock').value);
+
+            const price1 = parseFloat(document.getElementById('edit-price1').value) || 0;
+            const price2 = parseFloat(document.getElementById('edit-price2').value) || (price1 * 2);
+            const price3 = parseFloat(document.getElementById('edit-price3').value) || price1;
+            const price12 = parseFloat(document.getElementById('edit-price12').value) || price3;
+
+            if (isNaN(stock) || stock < 0 || price1 <= 0) {
+                alert('Por favor verifica Marca, Color, Stock y al menos el precio de 1 unidad.');
+                return;
+            }
+
+            const name = `${brand} - ${color} - Talla: ${size}`;
+
+            const updatedData = {
+                name, brand, color, size, stock,
+                price1, price2, price3, price12
+            };
+
+            update(ref(db, `products/${activeProductKey}`), updatedData).then(() => {
+                closeEditModal();
+            });
+        };
+
         window.deleteProduct = function(key) {
             if (confirm('¿Deseas eliminar este producto?')) {
                 remove(ref(db, `products/${key}`));
@@ -463,7 +585,8 @@
                         </td>
                         <td><strong>${item.stock}</strong></td>
                         <td class="actions-cell">
-                            <button class="btn-edit" onclick="openStockModal('${key}')">✏️ Stock</button>
+                            <button class="btn-warning" onclick="openEditModal('${key}')">✏️ Editar</button>
+                            <button class="btn-edit" onclick="openStockModal('${key}')">📦 Stock</button>
                             <button class="btn-danger" onclick="deleteProduct('${key}')">Eliminar</button>
                         </td>
                     </tr>
@@ -567,15 +690,33 @@
         function renderSalesHistory() {
             const list = document.getElementById('sales-history-list');
             list.innerHTML = '';
-            for (let key in sales) {
+            
+            // Renderiza en orden inverso para ver las ventas más recientes primero
+            const salesKeys = Object.keys(sales).reverse();
+
+            salesKeys.forEach(key => {
                 const sale = sales[key];
+                
+                // Construir la lista de ítems vendidos
+                let itemsHtml = '';
+                if (sale.items && sale.items.length > 0) {
+                    itemsHtml = sale.items.map(item => 
+                        `<div class="sale-item-detail">• ${item.qty}x ${item.name} ($${item.price.toFixed(2)})</div>`
+                    ).join('');
+                } else {
+                    itemsHtml = '<div class="sale-item-detail" style="font-style: italic;">Sin detalle de prendas</div>';
+                }
+
                 list.innerHTML += `
                     <tr>
-                        <td>${sale.date}</td>
-                        <td>$${sale.total.toFixed(2)}</td>
+                        <td>
+                            <strong>${sale.date}</strong>
+                            ${itemsHtml}
+                        </td>
+                        <td style="font-weight: bold; color: var(--primary);">$${sale.total.toFixed(2)}</td>
                     </tr>
                 `;
-            }
+            });
         }
 
         function renderTopProducts() {
