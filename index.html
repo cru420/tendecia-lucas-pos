@@ -113,8 +113,16 @@
                 </div>
                 <div class="grid-2">
                     <div class="form-group">
-                        <label>Talla</label>
-                        <input type="text" id="prod-size" placeholder="S, M, L">
+                        <label>Talla (XS a XXL)</label>
+                        <select id="prod-size">
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M" selected>M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                            <option value="Única">Única / Estándar</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Stock Inicial</label>
@@ -231,8 +239,8 @@
         window.addProduct = function() {
             const name = document.getElementById('prod-name').value;
             const brand = document.getElementById('prod-brand').value || 'Sin Marca';
-            const color = document.getElementById('prod-color').value || 'Unico';
-            const size = document.getElementById('prod-size').value || 'Estandar';
+            const color = document.getElementById('prod-color').value || 'Único';
+            const size = document.getElementById('prod-size').value || 'M';
             const stock = parseInt(document.getElementById('prod-stock').value);
 
             const price1 = parseFloat(document.getElementById('prod-price1').value) || 0;
@@ -250,7 +258,6 @@
                 document.getElementById('prod-name').value = '';
                 document.getElementById('prod-brand').value = '';
                 document.getElementById('prod-color').value = '';
-                document.getElementById('prod-size').value = '';
                 document.getElementById('prod-stock').value = '';
                 document.getElementById('prod-price1').value = '';
                 document.getElementById('prod-price2').value = '';
@@ -280,7 +287,7 @@
                 const item = products[key];
                 list.innerHTML += `
                     <tr>
-                        <td><strong>${item.name}</strong><br><small style="color:var(--text-secondary);">${item.brand} | ${item.color} | ${item.size}</small></td>
+                        <td><strong>${item.name}</strong><br><small style="color:var(--text-secondary);">${item.brand} | ${item.color} | Talla: ${item.size}</small></td>
                         <td>
                             <span class="price-badge">1x: $${item.price1}</span><br>
                             <span class="price-badge">2x: $${item.price2}</span><br>
@@ -302,7 +309,7 @@
             for (let key in products) {
                 const item = products[key];
                 if (item.stock > 0) {
-                    select.innerHTML += `<option value="${key}">${item.name} [${item.brand} | ${item.color} | ${item.size}] (Stock: ${item.stock})</option>`;
+                    select.innerHTML += `<option value="${key}">${item.name} [${item.brand} | ${item.color} | Talla: ${item.size}] (Stock: ${item.stock})</option>`;
                 }
             }
         }
