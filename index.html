@@ -88,6 +88,13 @@
         th, td { padding: 0.6rem; border-bottom: 1px solid var(--border); }
         th { background-color: #f8fafc; color: var(--text-secondary); }
         .actions-cell { display: flex; gap: 0.3rem; }
+
+        /* Estilos para el Ranking */
+        .ranking-item { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+        .ranking-badge { background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; margin-right: 8px; }
+        .ranking-top1 { background: #f59e0b; }
+        .ranking-top2 { background: #64748b; }
+        .ranking-top3 { background: #b45309; }
     </style>
 </head>
 <body>
@@ -232,7 +239,7 @@
             </div>
         </section>
 
-        <!-- REPORTES -->
+        <!-- REPORTES Y RANKING -->
         <section id="sec-reports" class="section">
             <div class="metrics-grid">
                 <div class="metric-card">
@@ -242,6 +249,15 @@
                 <div class="metric-card">
                     <label>Ventas Realizadas</label>
                     <div class="metric-value" id="today-count-val">0</div>
+                </div>
+            </div>
+
+            <!-- RANKING PRODUCTOS MÁS VENDIDOS -->
+            <div class="card">
+                <h2>🏆 Productos Más Vendidos</h2>
+                <br>
+                <div id="top-products-container">
+                    <p style="color: var(--text-secondary); text-align: center; padding: 0.5rem;">Aún no hay ventas registradas.</p>
                 </div>
             </div>
 
@@ -521,9 +537,10 @@
             document.getElementById('today-total-val').innerText = '$' + totalSum.toFixed(2);
             document.getElementById('today-count-val').innerText = todaySales.length;
 
+            // Renderizar Historial
             const tbody = document.getElementById('sales-history-body');
             tbody.innerHTML = '';
-            todaySales.reverse().forEach(s => {
+            [...todaySales].reverse().forEach(s => {
                 const time = new Date(s.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -533,6 +550,51 @@
                     <td><strong>$${s.total.toFixed(2)}</strong></td>
                 `;
                 tbody.appendChild(tr);
+            });
+
+            // Renderizar Ranking de Más Vendidos
+            renderTopProducts();
+        }
+
+        function renderTopProducts() {
+            const container = document.getElementById('top-products-container');
+            container.innerHTML = '';
+
+            if (sales.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 0.5rem;">Aún no hay ventas registradas.</p>';
+                return;
+            }
+
+            // Agrupar ventas por producto
+            const counts = {};
+            sales.forEach(s => {
+                counts[s.item] = (counts[s.item] || 0) + s.qty;
+            });
+
+            // Ordenar de mayor a menor
+            const sorted = Object.keys(counts)
+                .map(item => ({ item, qty: counts[item] }))
+                .sort((a, b) => b.qty - a.qty);
+
+            // Mostrar los mejores resultados
+            sorted.forEach((prod, idx) => {
+                let badgeClass = 'ranking-badge';
+                if (idx === 0) badgeClass += ' ranking-top1';
+                else if (idx === 1) badgeClass += ' ranking-top2';
+                else if (idx === 2) badgeClass += ' ranking-top3';
+
+                const div = document.createElement('div');
+                div.className = 'ranking-item';
+                div.innerHTML = `
+                    <div style="display: flex; align-items: center;">
+                        <span class="${badgeClass}">${idx + 1}</span>
+                        <strong>${prod.item}</strong>
+                    </div>
+                    <div style="font-weight: 700; color: var(--primary);">
+                        ${prod.qty} ${prod.qty === 1 ? 'unidad' : 'unidades'}
+                    </div>
+                `;
+                container.appendChild(div);
             });
         }
     </script>
