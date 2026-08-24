@@ -69,9 +69,9 @@
             <div class="card">
                 <h2>1. Seleccionar Producto</h2>
                 <div class="form-group">
-                    <label>Producto</label>
+                    <label>Producto (Marca - Color - Talla - Stock)</label>
                     <select id="sale-product-select">
-                        <option value="">Cargando productos...</option>
+                        <option value="">Cargando prendas...</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -270,8 +270,8 @@
         });
 
         window.addProduct = function() {
-            const brand = document.getElementById('prod-brand').value || 'Sin Marca';
-            const color = document.getElementById('prod-color').value || 'Único';
+            const brand = document.getElementById('prod-brand').value.trim() || 'Generico';
+            const color = document.getElementById('prod-color').value.trim() || 'Sin Color';
             const size = document.getElementById('prod-size').value || 'M';
             const stock = parseInt(document.getElementById('prod-stock').value);
 
@@ -285,7 +285,7 @@
                 return;
             }
 
-            const name = `${brand.toUpperCase()} - ${color} (${size})`;
+            const name = `${brand} - ${color} - Talla: ${size}`;
 
             const newProdRef = push(ref(db, 'products'));
             set(newProdRef, { name, brand, color, size, stock, price1, price2, price3, price12 }).then(() => {
@@ -302,7 +302,7 @@
         window.openStockModal = function(key) {
             activeProductKey = key;
             const prod = products[key];
-            document.getElementById('modal-prod-title').innerText = `Stock: ${prod.brand} - ${prod.color}`;
+            document.getElementById('modal-prod-title').innerText = `Stock: ${prod.brand || 'Prenda'} - ${prod.color || ''}`;
             document.getElementById('modal-current-stock').innerText = `${prod.stock} unidades`;
             document.getElementById('modal-stock-input').value = '';
             document.getElementById('stock-mode').value = 'add';
@@ -368,9 +368,13 @@
             list.innerHTML = '';
             for (let key in products) {
                 const item = products[key];
+                const brand = item.brand || item.name || 'Sin Marca';
+                const color = item.color ? `Color: ${item.color}` : '';
+                const size = item.size ? `Talla: ${item.size}` : '';
+
                 list.innerHTML += `
                     <tr>
-                        <td><strong>${item.brand}</strong><br><small style="color:var(--text-secondary);">${item.color} | Talla: ${item.size}</small></td>
+                        <td><strong>${brand}</strong><br><small style="color:var(--text-secondary);">${color} ${size ? '| ' + size : ''}</small></td>
                         <td>
                             <span class="price-badge">1x: $${item.price1}</span><br>
                             <span class="price-badge">2x: $${item.price2}</span><br>
@@ -393,7 +397,12 @@
             for (let key in products) {
                 const item = products[key];
                 if (item.stock > 0) {
-                    select.innerHTML += `<option value="${key}">${item.brand} | ${item.color} | Talla: ${item.size} (Stock: ${item.stock})</option>`;
+                    const brand = item.brand || 'Generico';
+                    const color = item.color || 'Sin color';
+                    const size = item.size || 'M';
+                    // Formato solicitado: Marca - Color - Talla (Stock: X)
+                    const label = `${brand} - ${color} - Talla: ${size} (Stock: ${item.stock})`;
+                    select.innerHTML += `<option value="${key}">${label}</option>`;
                 }
             }
         }
@@ -407,13 +416,16 @@
             const prod = products[key];
 
             if (qty > prod.stock) {
-                alert('No hay suficiente stock');
+                alert('No hay suficiente stock disponible');
                 return;
             }
 
             const totalPrice = calculateTotalPrice(qty, prod);
             const unitPrice = (totalPrice / qty).toFixed(2);
-            const displayName = `${prod.brand} / ${prod.color} / ${prod.size}`;
+            const brand = prod.brand || 'Prenda';
+            const color = prod.color || '';
+            const size = prod.size || '';
+            const displayName = `${brand} - ${color} (${size})`;
 
             cart.push({ key, name: displayName, unitPrice: parseFloat(unitPrice), totalPrice, qty });
             renderCart();
