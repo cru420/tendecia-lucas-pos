@@ -3,120 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS Móvil - Mi Tienda</title>
+    <title>POS Tienda - Tendencia Lucas</title>
     <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --text: #0f172a;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
-            --danger: #ef4444;
-            --success: #10b981;
-            --warning: #f59e0b;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; color: #333; padding-bottom: 70px; }
+        
+        /* Encabezado */
+        header { background-color: #ffffff; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
+        header h1 { font-size: 20px; color: #4f46e5; font-weight: 800; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
-        header { background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem; position: sticky; top: 0; z-index: 10; }
-        .header-title { font-size: 1.25rem; font-weight: bold; color: var(--primary); }
-        main { padding: 1rem; max-width: 600px; margin: 0 auto; }
-        .card { background: var(--surface); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        h2 { font-size: 1.1rem; margin-bottom: 0.75rem; }
-        .form-group { margin-bottom: 0.75rem; }
-        label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
-        input, select { width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
-        button { width: 100%; padding: 0.75rem; border: none; border-radius: 6px; background-color: var(--primary); color: white; font-weight: bold; font-size: 1rem; cursor: pointer; }
-        button:active { background-color: var(--primary-dark); }
-        .btn-danger { background-color: var(--danger); padding: 0.4rem 0.6rem; font-size: 0.8rem; width: auto; }
-        .btn-edit { background-color: var(--primary); padding: 0.4rem 0.6rem; font-size: 0.8rem; width: auto; }
-        .btn-warning { background-color: var(--warning); padding: 0.4rem 0.6rem; font-size: 0.8rem; width: auto; color: white; }
-        .btn-secondary { background-color: #64748b; padding: 0.5rem; font-size: 0.85rem; }
-        .btn-success { background-color: var(--success); }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th, td { padding: 0.6rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
-        th { background-color: #f8fafc; color: var(--text-secondary); }
-        .actions-cell { display: flex; gap: 0.3rem; flex-direction: column; }
-        .ranking-item { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
-        .ranking-badge { background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; margin-right: 8px; }
-        .ranking-top1 { background: #f59e0b; }
-        .ranking-top2 { background: #64748b; }
-        .ranking-top3 { background: #b45309; }
-        .nav-tabs { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); display: flex; border-top: 1px solid var(--border); }
-        .nav-tab { flex: 1; padding: 0.75rem; text-align: center; background: none; border: none; color: var(--text-secondary); font-size: 0.8rem; border-radius: 0; }
-        .nav-tab.active { color: var(--primary); border-top: 2px solid var(--primary); }
-        .view { display: none; }
-        .view.active { display: block; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-        .price-badge { font-size: 0.75rem; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
 
-        /* Estilos del Historial de Ventas */
-        .sale-item-detail { font-size: 0.8rem; color: var(--text-secondary); margin-top: 3px; }
-        .day-total-box { background: #ecfdf5; color: #047857; padding: 0.6rem; border-radius: 6px; font-weight: bold; text-align: right; margin-bottom: 1rem; font-size: 0.95rem; border: 1px solid #a7f3d0; }
+        /* Contenedores de Secciones */
+        .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card h3 { font-size: 16px; margin-bottom: 15px; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
 
-        /* Stock info box */
-        .stock-badge-box { background: #e0e7ff; color: #3730a3; padding: 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.9rem; text-align: center; margin-bottom: 0.75rem; }
+        /* Formularios y Selects */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; background-color: #fff; }
+        input:focus, select:focus { border-color: #4f46e5; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        /* Estilos del Modal / Ventana Emergente */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; padding: 1.5rem; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
+        /* Botones */
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; transition: background 0.2s; }
+        .btn-primary { background: #4f46e5; color: white; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; width: auto; }
+
+        /* Tablas */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; }
+        th { background-color: #f8fafc; color: #64748b; font-weight: 600; }
+
+        /* Totales */
+        .total-box { text-align: right; margin-top: 15px; font-size: 18px; font-weight: 800; color: #0f172a; }
+
+        /* Navegación Inferior (Barra de Menú) */
+        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; border-top: 1px solid #e2e8f0; height: 60px; z-index: 100; }
+        .nav-item { flex: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: #64748b; cursor: pointer; text-decoration: none; border-top: 3px solid transparent; }
+        .nav-item.active { color: #4f46e5; border-top-color: #4f46e5; background-color: #f8fafc; }
+
+        /* Ocultar secciones inactivas */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-title">POS Tienda</div>
+        <h1>POS Tienda</h1>
     </header>
 
-    <main>
-        <!-- VENTA -->
-        <div id="view-sales" class="view active">
-            <div class="card">
-                <h2>1. Seleccionar Producto</h2>
-                
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Marca</label>
-                        <input type="text" id="sale-brand" placeholder="Ej. POLO" oninput="checkSaleStock()">
-                    </div>
-                    <div class="form-group">
-                        <label>Color</label>
-                        <input type="text" id="sale-color" placeholder="Ej. BLANCO" oninput="checkSaleStock()">
-                    </div>
-                </div>
+    <div class="container">
 
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Talla</label>
-                        <select id="sale-size" onchange="checkSaleStock()">
-                            <option value="XS">XS</option>
-                            <option value="S">S</option>
-                            <option value="M" selected>M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="XXL">XXL</option>
-                            <option value="Única">Única</option>
+        <!-- ================= PESTAÑA: VENDER ================= -->
+        <div id="tabVender" class="tab-content active">
+            
+            <!-- 1. Seleccionar Producto -->
+            <div class="card">
+                <h3>1. Seleccionar Producto</h3>
+                
+                <div class="grid-2 form-group">
+                    <div>
+                        <label>Marca / Producto</label>
+                        <select id="selectMarca" onchange="actualizarOpcionesColores()">
+                            <option value="">Selecciona una marca...</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Cantidad a Vender</label>
-                        <input type="number" id="sale-quantity" value="1" min="1">
+                    <div>
+                        <label>Color</label>
+                        <select id="selectColor" onchange="actualizarOpcionesTallas()" disabled>
+                            <option value="">Primero elige Marca</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- Indicador de Stock Disponible -->
-                <div id="stock-info" class="stock-badge-box">
-                    Stock Disponible: --
+                <div class="grid-2 form-group">
+                    <div>
+                        <label>Talla</label>
+                        <select id="selectTalla" disabled>
+                            <option value="">Primero elige Color</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Cantidad a Vender</label>
+                        <input type="number" id="cantVender" value="1" min="1">
+                    </div>
                 </div>
 
-                <button onclick="addToCart()">Agregar al Carrito</button>
+                <button class="btn btn-primary" onclick="agregarAlCarrito()">Agregar al Carrito</button>
             </div>
 
+            <!-- 2. Detalle de Venta -->
             <div class="card">
-                <h2>2. Detalle de Venta</h2>
+                <h3>2. Detalle de Venta</h3>
                 <table>
                     <thead>
                         <tr>
@@ -124,709 +108,336 @@
                             <th>Cant</th>
                             <th>Precio C/U</th>
                             <th>Subt</th>
-                            <th></th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
-                    <tbody id="cart-list"></tbody>
+                    <tbody id="tablaCarrito">
+                        <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Carrito vacío</td></tr>
+                    </tbody>
                 </table>
-                <h3 style="margin-top: 1rem; text-align: right;">Total: $<span id="cart-total">0.00</span></h3>
-                <br>
-                <button class="btn-success" onclick="completeSale()">Registrar Venta</button>
+
+                <div class="total-box">
+                    Total: Bs. <span id="totalCarrito">0.00</span>
+                </div>
+
+                <button class="btn btn-success" style="margin-top: 15px;" onclick="registrarVenta()">Registrar Venta</button>
             </div>
+
         </div>
 
-        <!-- INVENTARIO -->
-        <div id="view-inventory" class="view">
+
+        <!-- ================= PESTAÑA: INVENTARIO ================= -->
+        <div id="tabInventario" class="tab-content">
+            
             <div class="card">
-                <h2>Nuevo Producto / Precios Escalonados</h2>
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Marca</label>
-                        <input type="text" id="prod-brand" placeholder="Ej. POLO">
+                <h3>Agregar Producto al Inventario</h3>
+                <div class="grid-2 form-group">
+                    <div>
+                        <label>Marca / Producto</label>
+                        <input type="text" id="invMarca" placeholder="Ej. POLO">
                     </div>
-                    <div class="form-group">
+                    <div>
                         <label>Color</label>
-                        <input type="text" id="prod-color" placeholder="Ej. BLANCO">
+                        <input type="text" id="invColor" placeholder="Ej. BLANCO">
                     </div>
                 </div>
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Talla (XS a XXL)</label>
-                        <select id="prod-size">
-                            <option value="XS">XS</option>
-                            <option value="S">S</option>
-                            <option value="M" selected>M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="XXL">XXL</option>
-                            <option value="Única">Única / Estándar</option>
-                        </select>
+                <div class="grid-2 form-group">
+                    <div>
+                        <label>Talla</label>
+                        <input type="text" id="invTalla" placeholder="Ej. M">
                     </div>
-                    <div class="form-group">
-                        <label>Stock Inicial</label>
-                        <input type="number" id="prod-stock" placeholder="0">
+                    <div>
+                        <label>Precio (Bs.)</label>
+                        <input type="number" id="invPrecio" placeholder="100">
                     </div>
                 </div>
-
-                <hr style="margin: 1rem 0; border: none; border-top: 1px solid var(--border);">
-                <p style="font-weight: bold; font-size: 0.9rem; margin-bottom: 0.5rem;">Escala de Precios ($)</p>
-                
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>1 Unidad ($)</label>
-                        <input type="number" id="prod-price1" step="0.01" placeholder="85">
-                    </div>
-                    <div class="form-group">
-                        <label>2 Unidades (Total $)</label>
-                        <input type="number" id="prod-price2" step="0.01" placeholder="160">
-                    </div>
+                <div class="form-group">
+                    <label>Cantidad (Stock Initial)</label>
+                    <input type="number" id="invStock" placeholder="10">
                 </div>
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>3 a 11 Unidades (c/u $)</label>
-                        <input type="number" id="prod-price3" step="0.01" placeholder="75">
-                    </div>
-                    <div class="form-group">
-                        <label>12 a más (c/u $)</label>
-                        <input type="number" id="prod-price12" step="0.01" placeholder="70">
-                    </div>
-                </div>
-
-                <button onclick="addProduct()">Guardar Producto</button>
+                <button class="btn btn-primary" onclick="guardarNuevoProducto()">Guardar en Inventario</button>
             </div>
 
             <div class="card">
-                <h2>Inventario Actual</h2>
+                <h3>Stock Actual</h3>
                 <table>
                     <thead>
                         <tr>
                             <th>Producto</th>
-                            <th>Precios</th>
+                            <th>Color / Talla</th>
+                            <th>Precio</th>
                             <th>Stock</th>
-                            <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="inventory-list"></tbody>
+                    <tbody id="tablaInventario">
+                        <!-- Se llena dinámicamente -->
+                    </tbody>
                 </table>
             </div>
+
         </div>
 
-        <!-- REPORTES / RANKING -->
-        <div id="view-reports" class="view">
-            <div class="card">
-                <h2>🏆 Más Vendidos del Día</h2>
-                <div id="top-products-list"></div>
-            </div>
-
-            <div class="card">
-                <h2>Historial de Ventas</h2>
-                
-                <div class="form-group" style="margin-bottom: 1rem;">
-                    <label>Filtrar por Fecha:</label>
-                    <input type="date" id="history-date-filter" onchange="renderSalesHistory()">
-                </div>
-
-                <div id="day-total-display" class="day-total-box">
-                    Total del día: $0.00
-                </div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Hora y Detalle</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sales-history-list"></tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <!-- VENTANA EMERGENTE (MODAL) PARA ACTUALIZAR STOCK -->
-    <div id="stock-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-prod-title" style="margin-bottom: 0.5rem;">Actualizar Stock</h3>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
-                Stock actual: <strong id="modal-current-stock" style="color: var(--primary);">0</strong>
-            </p>
-            
-            <div class="form-group">
-                <label>Modo de actualización:</label>
-                <select id="stock-mode" onchange="toggleStockMode()">
-                    <option value="add">➕ Sumar al stock existente (Llegó mercadería)</option>
-                    <option value="set">📝 Reemplazar/Establecer total exacto</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label id="stock-input-label">Cantidad a sumar:</label>
-                <input type="number" id="modal-stock-input" placeholder="Ej. 5" min="0">
-            </div>
-
-            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                <button class="btn-success" onclick="confirmStockUpdate()">Guardar Stock</button>
-                <button class="btn-secondary" onclick="closeStockModal()">Cancelar</button>
-            </div>
-        </div>
     </div>
 
-    <!-- VENTANA EMERGENTE (MODAL) PARA EDITAR PRODUCTO COMPLETO -->
-    <div id="edit-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 1rem;">Editar Producto</h3>
-            
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>Marca</label>
-                    <input type="text" id="edit-brand">
-                </div>
-                <div class="form-group">
-                    <label>Color</label>
-                    <input type="text" id="edit-color">
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>Talla</label>
-                    <select id="edit-size">
-                        <option value="XS">XS</option>
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                        <option value="XXL">XXL</option>
-                        <option value="Única">Única / Estándar</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Stock</label>
-                    <input type="number" id="edit-stock">
-                </div>
-            </div>
-
-            <hr style="margin: 0.75rem 0; border: none; border-top: 1px solid var(--border);">
-            <p style="font-weight: bold; font-size: 0.85rem; margin-bottom: 0.5rem;">Precios ($)</p>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>1 Unid ($)</label>
-                    <input type="number" id="edit-price1" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>2 Unid Total ($)</label>
-                    <input type="number" id="edit-price2" step="0.01">
-                </div>
-            </div>
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>3 a 11 Unid ($)</label>
-                    <input type="number" id="edit-price3" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>12+ Unid ($)</label>
-                    <input type="number" id="edit-price12" step="0.01">
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                <button class="btn-success" onclick="confirmProductEdit()">Guardar Cambios</button>
-                <button class="btn-secondary" onclick="closeEditModal()">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <nav class="nav-tabs">
-        <button class="nav-tab active" onclick="switchTab('sales', this)">Vender</button>
-        <button class="nav-tab" onclick="switchTab('inventory', this)">Inventario</button>
-        <button class="nav-tab" onclick="switchTab('reports', this)">Reportes</button>
+    <!-- Menú de Navegación Inferior -->
+    <nav class="nav-bottom">
+        <div class="nav-item active" onclick="cambiarPestaña('tabVender', this)">Vender</div>
+        <div class="nav-item" onclick="cambiarPestaña('tabInventario', this)">Inventario</div>
     </nav>
 
-    <!-- Firebase Script -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    <!-- LÓGICA JAVASCRIPT -->
+    <script>
+        // Datos Iniciales de Ejemplo
+        let inventario = JSON.parse(localStorage.getItem('pos_inventario')) || [
+            { id: 1, marca: "POLO", color: "BLANCO", talla: "M", precio: 120, stock: 10 },
+            { id: 2, marca: "POLO", color: "NEGRO", talla: "L", precio: 120, stock: 5 },
+            { id: 3, marca: "COLUMBIA", color: "VERDE", talla: "S", precio: 180, stock: 8 }
+        ];
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDfeSkWBfmGFcZRqPtbWji6ZHrZ-xa1Qg0",
-            authDomain: "tendencialucaspos.firebaseapp.com",
-            databaseURL: "https://tendencialucaspos-default-rtdb.firebaseio.com",
-            projectId: "tendencialucaspos",
-            storageBucket: "tendencialucaspos.firebasestorage.app",
-            messagingSenderId: "49220624332",
-            appId: "1:49220624332:web:126b39ee0668987631c769"
-        };
+        let carrito = [];
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        let products = {};
-        let sales = {};
-        let cart = [];
-        let activeProductKey = null;
-
-        // Establecer fecha de hoy por defecto en el selector de fecha (YYYY-MM-DD)
-        const todayIso = new Date().toISOString().split('T')[0];
-        document.getElementById('history-date-filter').value = todayIso;
-
-        onValue(ref(db, 'products'), (snapshot) => {
-            products = snapshot.val() || {};
-            renderInventory();
-            checkSaleStock();
-            renderTopProducts();
+        // Inicializar aplicación
+        document.addEventListener("DOMContentLoaded", () => {
+            actualizarTablaInventario();
+            cargarMarcas();
         });
 
-        onValue(ref(db, 'sales'), (snapshot) => {
-            sales = snapshot.val() || {};
-            renderSalesHistory();
-            renderTopProducts();
-        });
-
-        window.addProduct = function() {
-            const brand = document.getElementById('prod-brand').value.trim() || 'Generico';
-            const color = document.getElementById('prod-color').value.trim() || 'Sin Color';
-            const size = document.getElementById('prod-size').value || 'M';
-            const stock = parseInt(document.getElementById('prod-stock').value);
-
-            const price1 = parseFloat(document.getElementById('prod-price1').value) || 0;
-            const price2 = parseFloat(document.getElementById('prod-price2').value) || (price1 * 2);
-            const price3 = parseFloat(document.getElementById('prod-price3').value) || price1;
-            const price12 = parseFloat(document.getElementById('prod-price12').value) || price3;
-
-            if (isNaN(stock) || price1 <= 0) {
-                alert('Por favor completa Marca, Color, Stock y al menos el precio de 1 unidad');
-                return;
-            }
-
-            const name = `${brand} - ${color} - Talla: ${size}`;
-
-            const newProdRef = push(ref(db, 'products'));
-            set(newProdRef, { name, brand, color, size, stock, price1, price2, price3, price12 }).then(() => {
-                document.getElementById('prod-brand').value = '';
-                document.getElementById('prod-color').value = '';
-                document.getElementById('prod-stock').value = '';
-                document.getElementById('prod-price1').value = '';
-                document.getElementById('prod-price2').value = '';
-                document.getElementById('prod-price3').value = '';
-                document.getElementById('prod-price12').value = '';
-            });
-        };
-
-        function findProductMatch(brand, color, size) {
-            const cleanBrand = brand.trim().toLowerCase();
-            const cleanColor = color.trim().toLowerCase();
-            const cleanSize = size.trim().toLowerCase();
-
-            for (let key in products) {
-                const item = products[key];
-                const itemBrand = (item.brand || '').trim().toLowerCase();
-                const itemColor = (item.color || '').trim().toLowerCase();
-                const itemSize = (item.size || '').trim().toLowerCase();
-
-                if (itemBrand === cleanBrand && itemColor === cleanColor && itemSize === cleanSize) {
-                    return { key, ...item };
-                }
-            }
-            return null;
-        }
-
-        window.checkSaleStock = function() {
-            const brand = document.getElementById('sale-brand').value;
-            const color = document.getElementById('sale-color').value;
-            const size = document.getElementById('sale-size').value;
-            const stockInfoDiv = document.getElementById('stock-info');
-
-            if (!brand.trim() || !color.trim()) {
-                stockInfoDiv.innerHTML = 'Ingresa Marca y Color';
-                stockInfoDiv.style.background = '#e2e8f0';
-                stockInfoDiv.style.color = '#64748b';
-                return;
-            }
-
-            const matched = findProductMatch(brand, color, size);
-
-            if (matched) {
-                stockInfoDiv.innerHTML = `Stock Disponible: <strong>${matched.stock} unidades</strong>`;
-                if (matched.stock > 0) {
-                    stockInfoDiv.style.background = '#d1fae5';
-                    stockInfoDiv.style.color = '#065f46';
-                } else {
-                    stockInfoDiv.innerHTML = 'Stock Agotado (0 unidades)';
-                    stockInfoDiv.style.background = '#fee2e2';
-                    stockInfoDiv.style.color = '#991b1b';
-                }
-            } else {
-                stockInfoDiv.innerHTML = 'Producto No Encontrado en Inventario';
-                stockInfoDiv.style.background = '#fef3c7';
-                stockInfoDiv.style.color = '#92400e';
-            }
-        };
-
-        window.openStockModal = function(key) {
-            activeProductKey = key;
-            const prod = products[key];
-            document.getElementById('modal-prod-title').innerText = `Stock: ${prod.brand || 'Prenda'} - ${prod.color || ''}`;
-            document.getElementById('modal-current-stock').innerText = `${prod.stock} unidades`;
-            document.getElementById('modal-stock-input').value = '';
-            document.getElementById('stock-mode').value = 'add';
-            toggleStockMode();
-            document.getElementById('stock-modal').classList.add('active');
-        };
-
-        window.closeStockModal = function() {
-            document.getElementById('stock-modal').classList.remove('active');
-            activeProductKey = null;
-        };
-
-        window.toggleStockMode = function() {
-            const mode = document.getElementById('stock-mode').value;
-            const label = document.getElementById('stock-input-label');
-            if (mode === 'add') {
-                label.innerText = 'Cantidad a SUMAR:';
-            } else {
-                label.innerText = 'NUEVO stock total exacto:';
-            }
-        };
-
-        window.confirmStockUpdate = function() {
-            if (!activeProductKey) return;
-            const valueInput = parseInt(document.getElementById('modal-stock-input').value);
+        // NAVEGACIÓN ENTRE PESTAÑAS
+        function cambiarPestaña(tabId, elemento) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             
-            if (isNaN(valueInput) || valueInput < 0) {
-                alert('Por favor ingresa una cantidad válida.');
-                return;
-            }
+            document.getElementById(tabId).classList.add('active');
+            elemento.classList.add('active');
 
-            const currentStock = products[activeProductKey].stock;
-            const mode = document.getElementById('stock-mode').value;
-            let finalStock = currentStock;
-
-            if (mode === 'add') {
-                finalStock = currentStock + valueInput;
-            } else {
-                finalStock = valueInput;
-            }
-
-            update(ref(db, `products/${activeProductKey}`), { stock: finalStock }).then(() => {
-                closeStockModal();
-            });
-        };
-
-        window.openEditModal = function(key) {
-            activeProductKey = key;
-            const prod = products[key];
-
-            document.getElementById('edit-brand').value = prod.brand || '';
-            document.getElementById('edit-color').value = prod.color || '';
-            document.getElementById('edit-size').value = prod.size || 'M';
-            document.getElementById('edit-stock').value = prod.stock ?? 0;
-            document.getElementById('edit-price1').value = prod.price1 ?? '';
-            document.getElementById('edit-price2').value = prod.price2 ?? '';
-            document.getElementById('edit-price3').value = prod.price3 ?? '';
-            document.getElementById('edit-price12').value = prod.price12 ?? '';
-
-            document.getElementById('edit-modal').classList.add('active');
-        };
-
-        window.closeEditModal = function() {
-            document.getElementById('edit-modal').classList.remove('active');
-            activeProductKey = null;
-        };
-
-        window.confirmProductEdit = function() {
-            if (!activeProductKey) return;
-
-            const brand = document.getElementById('edit-brand').value.trim() || 'Generico';
-            const color = document.getElementById('edit-color').value.trim() || 'Sin Color';
-            const size = document.getElementById('edit-size').value || 'M';
-            const stock = parseInt(document.getElementById('edit-stock').value);
-
-            const price1 = parseFloat(document.getElementById('edit-price1').value) || 0;
-            const price2 = parseFloat(document.getElementById('edit-price2').value) || (price1 * 2);
-            const price3 = parseFloat(document.getElementById('edit-price3').value) || price1;
-            const price12 = parseFloat(document.getElementById('edit-price12').value) || price3;
-
-            if (isNaN(stock) || stock < 0 || price1 <= 0) {
-                alert('Por favor verifica Marca, Color, Stock y al menos el precio de 1 unidad.');
-                return;
-            }
-
-            const name = `${brand} - ${color} - Talla: ${size}`;
-
-            const updatedData = {
-                name, brand, color, size, stock,
-                price1, price2, price3, price12
-            };
-
-            update(ref(db, `products/${activeProductKey}`), updatedData).then(() => {
-                closeEditModal();
-            });
-        };
-
-        window.deleteProduct = function(key) {
-            if (confirm('¿Deseas eliminar este producto?')) {
-                remove(ref(db, `products/${key}`));
-            }
-        };
-
-        function calculateTotalPrice(qty, p) {
-            if (qty === 1) return p.price1;
-            if (qty === 2) return p.price2;
-            if (qty >= 3 && qty <= 11) return qty * p.price3;
-            if (qty >= 12) return qty * p.price12;
-            return qty * p.price1;
-        }
-
-        function renderInventory() {
-            const list = document.getElementById('inventory-list');
-            list.innerHTML = '';
-            for (let key in products) {
-                const item = products[key];
-                const brand = item.brand || item.name || 'Sin Marca';
-                const color = item.color ? `Color: ${item.color}` : '';
-                const size = item.size ? `Talla: ${item.size}` : '';
-
-                list.innerHTML += `
-                    <tr>
-                        <td><strong>${brand}</strong><br><small style="color:var(--text-secondary);">${color} ${size ? '| ' + size : ''}</small></td>
-                        <td>
-                            <span class="price-badge">1x: $${item.price1}</span><br>
-                            <span class="price-badge">2x: $${item.price2}</span><br>
-                            <span class="price-badge">3-11: $${item.price3}/u</span><br>
-                            <span class="price-badge">12+: $${item.price12}/u</span>
-                        </td>
-                        <td><strong>${item.stock}</strong></td>
-                        <td class="actions-cell">
-                            <button class="btn-warning" onclick="openEditModal('${key}')">✏️ Editar</button>
-                            <button class="btn-edit" onclick="openStockModal('${key}')">📦 Stock</button>
-                            <button class="btn-danger" onclick="deleteProduct('${key}')">Eliminar</button>
-                        </td>
-                    </tr>
-                `;
+            if(tabId === 'tabVender') {
+                cargarMarcas();
             }
         }
 
-        window.addToCart = function() {
-            const brand = document.getElementById('sale-brand').value;
-            const color = document.getElementById('sale-color').value;
-            const size = document.getElementById('sale-size').value;
-            const qty = parseInt(document.getElementById('sale-quantity').value);
+        // ================= SISTEMA DE FILTRADO (MARCA -> COLOR -> TALLA) =================
 
-            if (!brand.trim() || !color.trim()) {
-                alert('Por favor escribe la Marca y el Color.');
+        function cargarMarcas() {
+            const selectMarca = document.getElementById('selectMarca');
+            selectMarca.innerHTML = '<option value="">Selecciona una marca...</option>';
+            
+            const marcas = [...new Set(inventario.map(item => item.marca))];
+            
+            marcas.forEach(marca => {
+                if(marca) {
+                    const option = document.createElement('option');
+                    option.value = marca;
+                    option.textContent = marca;
+                    selectMarca.appendChild(option);
+                }
+            });
+
+            // Reiniciar selectores dependientes
+            actualizarOpcionesColores();
+        }
+
+        function actualizarOpcionesColores() {
+            const marcaSeleccionada = document.getElementById('selectMarca').value;
+            const selectColor = document.getElementById('selectColor');
+            const selectTalla = document.getElementById('selectTalla');
+            
+            selectColor.innerHTML = '<option value="">Selecciona Color...</option>';
+            selectTalla.innerHTML = '<option value="">Primero elige Color</option>';
+            selectTalla.disabled = true;
+
+            if (!marcaSeleccionada) {
+                selectColor.disabled = true;
                 return;
             }
 
-            if (isNaN(qty) || qty <= 0) {
-                alert('Ingresa una cantidad válida.');
+            const filtrados = inventario.filter(p => p.marca === marcaSeleccionada && p.stock > 0);
+            const colores = [...new Set(filtrados.map(p => p.color))];
+
+            colores.forEach(color => {
+                const option = document.createElement('option');
+                option.value = color;
+                option.textContent = color;
+                selectColor.appendChild(option);
+            });
+
+            selectColor.disabled = false;
+        }
+
+        function actualizarOpcionesTallas() {
+            const marcaSeleccionada = document.getElementById('selectMarca').value;
+            const colorSeleccionado = document.getElementById('selectColor').value;
+            const selectTalla = document.getElementById('selectTalla');
+
+            selectTalla.innerHTML = '<option value="">Selecciona Talla...</option>';
+
+            if (!colorSeleccionado) {
+                selectTalla.disabled = true;
                 return;
             }
 
-            const matched = findProductMatch(brand, color, size);
+            const filtrados = inventario.filter(p => 
+                p.marca === marcaSeleccionada && 
+                p.color === colorSeleccionado && 
+                p.stock > 0
+            );
+            
+            const tallas = [...new Set(filtrados.map(p => p.talla))];
 
-            if (!matched) {
-                alert('No existe un producto registrado con esa Marca, Color y Talla.');
+            tallas.forEach(talla => {
+                const option = document.createElement('option');
+                option.value = talla;
+                option.textContent = talla;
+                selectTalla.appendChild(option);
+            });
+
+            selectTalla.disabled = false;
+        }
+
+        // ================= GESTIÓN DEL CARRITO =================
+
+        function agregarAlCarrito() {
+            const marca = document.getElementById('selectMarca').value;
+            const color = document.getElementById('selectColor').value;
+            const talla = document.getElementById('selectTalla').value;
+            const cantidad = parseInt(document.getElementById('cantVender').value);
+
+            if (!marca || !color || !talla) {
+                alert("Por favor selecciona Marca, Color y Talla.");
                 return;
             }
 
-            if (qty > matched.stock) {
-                alert(`No hay suficiente stock. Disponible: ${matched.stock}`);
+            const productoEncontrado = inventario.find(p => 
+                p.marca === marca && p.color === color && p.talla === talla
+            );
+
+            if (!productoEncontrado) {
+                alert("Producto no disponible en stock.");
                 return;
             }
 
-            const totalPrice = calculateTotalPrice(qty, matched);
-            const unitPrice = (totalPrice / qty).toFixed(2);
-            const displayName = `${matched.brand} - ${matched.color} (${matched.size})`;
+            if (productoEncontrado.stock < cantidad) {
+                alert(`Stock insuficiente. Solo quedan ${productoEncontrado.stock} unidades.`);
+                return;
+            }
 
-            cart.push({ key: matched.key, name: displayName, unitPrice: parseFloat(unitPrice), totalPrice, qty });
-            renderCart();
-        };
+            // Agregar al carrito
+            carrito.push({
+                id: productoEncontrado.id,
+                producto: `${marca} (${color} - ${talla})`,
+                precio: productoEncontrado.precio,
+                cantidad: cantidad,
+                subtotal: productoEncontrado.precio * cantidad
+            });
 
-        function renderCart() {
-            const list = document.getElementById('cart-list');
-            list.innerHTML = '';
+            actualizarTablaCarrito();
+        }
+
+        function actualizarTablaCarrito() {
+            const tbody = document.getElementById('tablaCarrito');
+            tbody.innerHTML = '';
             let total = 0;
 
-            cart.forEach((item, index) => {
-                total += item.totalPrice;
-                list.innerHTML += `
+            if (carrito.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Carrito vacío</td></tr>';
+                document.getElementById('totalCarrito').textContent = '0.00';
+                return;
+            }
+
+            carrito.forEach((item, index) => {
+                total += item.subtotal;
+                tbody.innerHTML += `
                     <tr>
-                        <td>${item.name}</td>
-                        <td>${item.qty}</td>
-                        <td>$${item.unitPrice.toFixed(2)}</td>
-                        <td>$${item.totalPrice.toFixed(2)}</td>
-                        <td><button class="btn-danger" onclick="removeFromCart(${index})">X</button></td>
+                        <td>${item.producto}</td>
+                        <td>${item.cantidad}</td>
+                        <td>Bs. ${item.precio}</td>
+                        <td>Bs. ${item.subtotal}</td>
+                        <td><button class="btn-danger" onclick="eliminarDelCarrito(${index})">X</button></td>
                     </tr>
                 `;
             });
 
-            document.getElementById('cart-total').innerText = total.toFixed(2);
+            document.getElementById('totalCarrito').textContent = total.toFixed(2);
         }
 
-        window.removeFromCart = function(index) {
-            cart.splice(index, 1);
-            renderCart();
-        };
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            actualizarTablaCarrito();
+        }
 
-        window.completeSale = function() {
-            if (cart.length === 0) return;
-
-            const updates = {};
-            let totalAmount = 0;
-            const itemsSold = [];
-            
-            // Guardar con timestamp e ISO date para un filtrado exacto por fecha
-            const now = new Date();
-            const dateISO = now.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-            const timeString = now.toLocaleTimeString(); // Hora legible
-
-            cart.forEach(item => {
-                const newStock = products[item.key].stock - item.qty;
-                updates[`products/${item.key}/stock`] = newStock;
-                totalAmount += item.totalPrice;
-                itemsSold.push({ name: item.name, qty: item.qty, price: item.totalPrice });
-            });
-
-            const newSaleRef = push(ref(db, 'sales'));
-            updates[`sales/${newSaleRef.key}`] = {
-                date: now.toLocaleString(),
-                dateISO: dateISO,
-                time: timeString,
-                total: totalAmount,
-                items: itemsSold
-            };
-
-            update(ref(db), updates).then(() => {
-                cart = [];
-                renderCart();
-                document.getElementById('sale-brand').value = '';
-                document.getElementById('sale-color').value = '';
-                checkSaleStock();
-                alert('¡Venta realizada con éxito!');
-            });
-        };
-
-        // Convierte el formato de fecha antiguo (ej: "24/8/2026, 5:11:23 p.m.") a YYYY-MM-DD para compatibilidad
-       function extractISODate(sale) {
-    if (sale.dateISO) return sale.dateISO;
-    if (!sale.date) return '';
-    
-    // Intenta extraer y normalizar la fecha de formatos antiguos (ej: 24/8/2026)
-    const datePart = sale.date.split(',')[0].trim();
-    const parts = datePart.split('/');
-    
-    if (parts.length === 3) {
-        let day = parts[0].padStart(2, '0');
-        let month = parts[1].padStart(2, '0');
-        let year = parts[2];
-        
-        // Si el año viene en formato corto (ej: "26"), lo ajusta a "2026"
-        if (year.length === 2) year = '20' + year; 
-        
-        return `${year}-${month}-${day}`;
-    }
-    return '';
-}
-
-        window.renderSalesHistory = function() {
-            const list = document.getElementById('sales-history-list');
-            const selectedDate = document.getElementById('history-date-filter').value;
-            const totalDisplay = document.getElementById('day-total-display');
-            
-            list.innerHTML = '';
-            let dayTotal = 0;
-
-            const salesKeys = Object.keys(sales).reverse();
-
-            salesKeys.forEach(key => {
-                const sale = sales[key];
-                const saleISO = extractISODate(sale);
-
-                // Filtrar solo si coincide la fecha elegida
-                if (saleISO === selectedDate) {
-                    dayTotal += sale.total;
-
-                    let itemsHtml = '';
-                    if (sale.items && sale.items.length > 0) {
-                        itemsHtml = sale.items.map(item => 
-                            `<div class="sale-item-detail">• ${item.qty}x ${item.name} ($${item.price.toFixed(2)})</div>`
-                        ).join('');
-                    } else {
-                        itemsHtml = '<div class="sale-item-detail" style="font-style: italic;">Sin detalle</div>';
-                    }
-
-                    const displayTime = sale.time || sale.date;
-
-                    list.innerHTML += `
-                        <tr>
-                            <td>
-                                <strong>${displayTime}</strong>
-                                ${itemsHtml}
-                            </td>
-                            <td style="font-weight: bold; color: var(--primary);">$${sale.total.toFixed(2)}</td>
-                        </tr>
-                    `;
-                }
-            });
-
-            totalDisplay.innerText = `Total del día (${selectedDate}): $${dayTotal.toFixed(2)}`;
-
-            if (list.innerHTML === '') {
-                list.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--text-secondary);">No hay ventas registradas en esta fecha.</td></tr>';
-            }
-        };
-
-        function renderTopProducts() {
-            const productTotals = {};
-            const todayISO = new Date().toISOString().split('T')[0];
-
-            for (let key in sales) {
-                const sale = sales[key];
-                const saleISO = extractISODate(sale);
-
-                // Contar solo las ventas de la fecha de HOY
-                if (saleISO === todayISO && sale.items) {
-                    sale.items.forEach(item => {
-                        productTotals[item.name] = (productTotals[item.name] || 0) + item.qty;
-                    });
-                }
-            }
-
-            const sorted = Object.entries(productTotals).sort((a, b) => b[1] - a[1]);
-            const container = document.getElementById('top-products-list');
-            container.innerHTML = '';
-
-            if (sorted.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-secondary); font-size:0.85rem;">Aún no hay ventas el día de hoy.</p>';
+        function registrarVenta() {
+            if (carrito.length === 0) {
+                alert("El carrito está vacío.");
                 return;
             }
 
-            sorted.slice(0, 5).forEach(([name, qty], index) => {
-                let badgeClass = '';
-                if (index === 0) badgeClass = 'ranking-top1';
-                else if (index === 1) badgeClass = 'ranking-top2';
-                else if (index === 2) badgeClass = 'ranking-top3';
+            // Descontar del inventario
+            carrito.forEach(item => {
+                const prodIndex = inventario.findIndex(p => p.id === item.id);
+                if (prodIndex !== -1) {
+                    inventario[prodIndex].stock -= item.cantidad;
+                }
+            });
 
-                container.innerHTML += `
-                    <div class="ranking-item">
-                        <div>
-                            <span class="ranking-badge ${badgeClass}">${index + 1}</span>
-                            <strong>${name}</strong>
-                        </div>
-                        <div><strong>${qty}</strong> unid.</div>
-                    </div>
+            // Guardar cambios
+            localStorage.setItem('pos_inventario', JSON.stringify(inventario));
+            carrito = [];
+            
+            actualizarTablaCarrito();
+            actualizarTablaInventario();
+            cargarMarcas();
+            
+            alert("¡Venta registrada con éxito!");
+        }
+
+        // ================= GESTIÓN DEL INVENTARIO =================
+
+        function guardarNuevoProducto() {
+            const marca = document.getElementById('invMarca').value.toUpperCase().trim();
+            const color = document.getElementById('invColor').value.toUpperCase().trim();
+            const talla = document.getElementById('invTalla').value.toUpperCase().trim();
+            const precio = parseFloat(document.getElementById('invPrecio').value);
+            const stock = parseInt(document.getElementById('invStock').value);
+
+            if (!marca || !color || !talla || isNaN(precio) || isNaN(stock)) {
+                alert("Completa todos los campos adecuadamente.");
+                return;
+            }
+
+            const nuevoItem = {
+                id: Date.now(),
+                marca, color, talla, precio, stock
+            };
+
+            inventario.push(nuevoItem);
+            localStorage.setItem('pos_inventario', JSON.stringify(inventario));
+
+            actualizarTablaInventario();
+            
+            // Limpiar inputs
+            document.getElementById('invMarca').value = '';
+            document.getElementById('invColor').value = '';
+            document.getElementById('invTalla').value = '';
+            document.getElementById('invPrecio').value = '';
+            document.getElementById('invStock').value = '';
+
+            alert("Producto guardado en inventario.");
+        }
+
+        function actualizarTablaInventario() {
+            const tbody = document.getElementById('tablaInventario');
+            tbody.innerHTML = '';
+
+            inventario.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${item.marca}</strong></td>
+                        <td>${item.color} / ${item.talla}</td>
+                        <td>Bs. ${item.precio}</td>
+                        <td><span style="color: ${item.stock > 0 ? '#10b981' : '#ef4444'}; font-weight:bold;">${item.stock}</span></td>
+                    </tr>
                 `;
             });
         }
-
-        window.switchTab = function(tabName, element) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-
-            document.getElementById(`view-${tabName}`).classList.add('active');
-            element.classList.add('active');
-        };
     </script>
 </body>
 </html>
