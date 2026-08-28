@@ -45,21 +45,17 @@
         .ranking-top2 { background: #64748b; }
         .ranking-top3 { background: #b45309; }
         .nav-tabs { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); display: flex; border-top: 1px solid var(--border); }
-        .nav-tab { flex: 1; padding: 0.75rem; text-align: center; background: none; border: none; color: var(--text-secondary); font-size: 0.8rem; border-radius: 0; }
+        .nav-tab { flex: 1; padding: 0.75rem; text-align: center; background: none; border: none; color: var(--text-secondary); font-size: 0.8rem; border-radius: 0; cursor: pointer; }
         .nav-tab.active { color: var(--primary); border-top: 2px solid var(--primary); }
         .view { display: none; }
         .view.active { display: block; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
         .price-badge { font-size: 0.75rem; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
 
-        /* Estilos del Historial de Ventas */
         .sale-item-detail { font-size: 0.8rem; color: var(--text-secondary); margin-top: 3px; }
         .day-total-box { background: #ecfdf5; color: #047857; padding: 0.6rem; border-radius: 6px; font-weight: bold; text-align: right; margin-bottom: 1rem; font-size: 0.95rem; border: 1px solid #a7f3d0; }
-
-        /* Stock info box */
         .stock-badge-box { background: #e0e7ff; color: #3730a3; padding: 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.9rem; text-align: center; margin-bottom: 0.75rem; }
 
-        /* Estilos del Modal / Ventana Emergente */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 1.5rem; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
@@ -107,7 +103,6 @@
                     </div>
                 </div>
 
-                <!-- Indicador de Stock Disponible -->
                 <div id="stock-info" class="stock-badge-box">
                     Stock Disponible: --
                 </div>
@@ -243,7 +238,7 @@
         </div>
     </main>
 
-    <!-- VENTANA EMERGENTE (MODAL) PARA ACTUALIZAR STOCK -->
+    <!-- MODAL STOCK -->
     <div id="stock-modal" class="modal">
         <div class="modal-content">
             <h3 id="modal-prod-title" style="margin-bottom: 0.5rem;">Actualizar Stock</h3>
@@ -271,7 +266,7 @@
         </div>
     </div>
 
-    <!-- VENTANA EMERGENTE (MODAL) PARA EDITAR PRODUCTO COMPLETO -->
+    <!-- MODAL EDITAR -->
     <div id="edit-modal" class="modal">
         <div class="modal-content">
             <h3 style="margin-bottom: 1rem;">Editar Producto</h3>
@@ -343,7 +338,7 @@
         <button class="nav-tab" onclick="switchTab('reports', this)">Reportes</button>
     </nav>
 
-    <!-- Firebase Script -->
+    <!-- FIREBASE Y LÓGICA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -366,8 +361,13 @@
         let cart = [];
         let activeProductKey = null;
 
-        // Establecer fecha de hoy por defecto en el selector de fecha (YYYY-MM-DD)
-        const todayIso = new Date().toISOString().split('T')[0];
+        function getLocalDateISO() {
+            const d = new Date();
+            const offset = d.getTimezoneOffset() * 60000;
+            return new Date(d.getTime() - offset).toISOString().split('T')[0];
+        }
+
+        const todayIso = getLocalDateISO();
         document.getElementById('history-date-filter').value = todayIso;
 
         onValue(ref(db, 'products'), (snapshot) => {
@@ -382,6 +382,14 @@
             renderSalesHistory();
             renderTopProducts();
         });
+
+        window.switchTab = function(tabName, element) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+            document.getElementById(`view-${tabName}`).classList.add('active');
+            element.classList.add('active');
+        };
 
         window.addProduct = function() {
             const brand = document.getElementById('prod-brand').value.trim() || 'Generico';
@@ -676,10 +684,9 @@
             let totalAmount = 0;
             const itemsSold = [];
             
-            // Guardar con timestamp e ISO date para un filtrado exacto por fecha
             const now = new Date();
-            const dateISO = now.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-            const timeString = now.toLocaleTimeString(); // Hora legible
+            const dateISO = getLocalDateISO();
+            const timeString = now.toLocaleTimeString();
 
             cart.forEach(item => {
                 const newStock = products[item.key].stock - item.qty;
@@ -702,178 +709,93 @@
                 renderCart();
                 document.getElementById('sale-brand').value = '';
                 document.getElementById('sale-color').value = '';
+                document.getElementById('sale-quantity').value = '1';
                 checkSaleStock();
-                alert('¡Venta realizada con éxito!');
+                alert('¡Venta registrada con éxito!');
             });
         };
-
-        // Convierte el formato de fecha antiguo (ej: "24/8/2026, 5:11:23 p.m.") a YYYY-MM-DD para compatibilidad
-        function extractISODate(sale) {
-            if (sale.dateISO) return sale.dateISO;
-            if (!sale.date) return '';
-            
-            const datePart = sale.date.split(',')[0].trim(); // P. ej. "24/8/2026"
-            const parts = datePart.split('/');
-            if (parts.length === 3) {
-                const day = parts[0].padStart(2, '0');
-                const month = parts[1].padStart(2, '0');
-                const year = parts[2];
-                return `${year}-${month}-${day}`;
-            }
-            return '';
-        }
 
         window.renderSalesHistory = function() {
-            const list = document.getElementById('sales-history-list');
+            const historyList = document.getElementById('sales-history-list');
+            const dayTotalDisplay = document.getElementById('day-total-display');
             const selectedDate = document.getElementById('history-date-filter').value;
-            const totalDisplay = document.getElementById('day-total-display');
-            
-            list.innerHTML = '';
+
+            historyList.innerHTML = '';
             let dayTotal = 0;
 
-            const salesKeys = Object.keys(sales).reverse();
-
-            salesKeys.forEach(key => {
+            for (let key in sales) {
                 const sale = sales[key];
-                const saleISO = extractISODate(sale);
+                const saleDateISO = sale.dateISO || (sale.date ? sale.date.split(',')[0] : '');
 
-                // Filtrar solo si coincide la fecha elegida
-                if (saleISO === selectedDate) {
-                    dayTotal += sale.total;
-
-                    let itemsHtml = '';
-                    if (sale.items && sale.items.length > 0) {
-                        itemsHtml = sale.items.map(item => 
-                            `<div class="sale-item-detail">• ${item.qty}x ${item.name} ($${item.price.toFixed(2)})</div>`
-                        ).join('');
-                    } else {
-                        itemsHtml = '<div class="sale-item-detail" style="font-style: italic;">Sin detalle</div>';
-                    }
-
-                    const displayTime = sale.time || sale.date;
-
-                    list.innerHTML += `
-                        <tr>
-                            <td>
-                                <strong>${displayTime}</strong>
-                                ${itemsHtml}
-                            </td>
-                            <td style="font-weight: bold; color: var(--primary);">$${sale.total.toFixed(2)}</td>
-                        </tr>
-                    `;
+                if (selectedDate && saleDateISO !== selectedDate) {
+                    continue;
                 }
-            });
 
-            totalDisplay.innerText = `Total del día (${selectedDate}): $${dayTotal.toFixed(2)}`;
+                dayTotal += sale.total || 0;
 
-            if (list.innerHTML === '') {
-                list.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--text-secondary);">No hay ventas registradas en esta fecha.</td></tr>';
+                let itemsHTML = '';
+                if (sale.items && Array.isArray(sale.items)) {
+                    itemsHTML = sale.items.map(i => `${i.name} (x${i.qty}) - $${i.price.toFixed(2)}`).join('<br>');
+                }
+
+                historyList.innerHTML += `
+                    <tr>
+                        <td>
+                            <strong>${sale.time || sale.date || 'Hora N/A'}</strong>
+                            <div class="sale-item-detail">${itemsHTML}</div>
+                        </td>
+                        <td><strong>$${(sale.total || 0).toFixed(2)}</strong></td>
+                    </tr>
+                `;
             }
+
+            dayTotalDisplay.innerHTML = `Total del día (${selectedDate || 'Todo'}): <strong>$${dayTotal.toFixed(2)}</strong>`;
+            renderTopProducts();
         };
 
-       // OBTENER FECHA LOCAL CORRECTA (YYYY-MM-DD)
-function getLocalDateISO() {
-    const d = new Date();
-    const offset = d.getTimezoneOffset() * 60000;
-    return new Date(d.getTime() - offset).toISOString().split('T')[0];
-}
+        window.renderTopProducts = function() {
+            const topList = document.getElementById('top-products-list');
+            const selectedDate = document.getElementById('history-date-filter').value || getLocalDateISO();
+            const productCounts = {};
 
-const todayIso = getLocalDateISO();
-document.getElementById('history-date-filter').value = todayIso;
+            for (let key in sales) {
+                const sale = sales[key];
+                const saleDateISO = sale.dateISO || (sale.date ? sale.date.split(',')[0] : '');
 
-// AL CAMBIAR LA FECHA EN EL FILTRO, ACTUALIZA AMBOS REPORTES
-window.renderSalesHistory = function() {
-    const historyList = document.getElementById('sales-history-list');
-    const dayTotalDisplay = document.getElementById('day-total-display');
-    const selectedDate = document.getElementById('history-date-filter').value;
+                if (saleDateISO === selectedDate && sale.items) {
+                    sale.items.forEach(item => {
+                        productCounts[item.name] = (productCounts[item.name] || 0) + item.qty;
+                    });
+                }
+            }
 
-    historyList.innerHTML = '';
-    let dayTotal = 0;
+            const sortedProducts = Object.entries(productCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
 
-    for (let key in sales) {
-        const sale = sales[key];
-        const saleDateISO = sale.dateISO || (sale.date ? sale.date.split(',')[0] : '');
+            topList.innerHTML = '';
 
-        if (selectedDate && saleDateISO !== selectedDate) {
-            continue;
-        }
+            if (sortedProducts.length === 0) {
+                topList.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-secondary);">No hay ventas registradas en esta fecha.</p>';
+                return;
+            }
 
-        dayTotal += sale.total || 0;
+            sortedProducts.forEach(([name, count], index) => {
+                let badgeClass = '';
+                if (index === 0) badgeClass = 'ranking-top1';
+                else if (index === 1) badgeClass = 'ranking-top2';
+                else if (index === 2) badgeClass = 'ranking-top3';
 
-        let itemsHTML = '';
-        if (sale.items && Array.isArray(sale.items)) {
-            itemsHTML = sale.items.map(i => `${i.name} (x${i.qty}) - $${i.price.toFixed(2)}`).join('<br>');
-        }
-
-        historyList.innerHTML += `
-            <tr>
-                <td>
-                    <strong>${sale.time || sale.date || 'Hora N/A'}</strong>
-                    <div class="sale-item-detail">${itemsHTML}</div>
-                </td>
-                <td><strong>$${(sale.total || 0).toFixed(2)}</strong></td>
-            </tr>
-        `;
-    }
-
-    dayTotalDisplay.innerHTML = `Total del día (${selectedDate || 'Todo'}): <strong>$${dayTotal.toFixed(2)}</strong>`;
-    
-    // Llamamos a renderTopProducts para que el Top 5 cambie según el día seleccionado
-    renderTopProducts();
-};
-
-window.renderTopProducts = function() {
-    const topList = document.getElementById('top-products-list');
-    // Toma la fecha del filtro activo o la fecha de hoy
-    const selectedDate = document.getElementById('history-date-filter').value || getLocalDateISO();
-    const productCounts = {};
-
-    for (let key in sales) {
-        const sale = sales[key];
-        const saleDateISO = sale.dateISO || (sale.date ? sale.date.split(',')[0] : '');
-
-        if (saleDateISO === selectedDate && sale.items) {
-            sale.items.forEach(item => {
-                productCounts[item.name] = (productCounts[item.name] || 0) + item.qty;
+                topList.innerHTML += `
+                    <div class="ranking-item">
+                        <div>
+                            <span class="ranking-badge ${badgeClass}">${index + 1}</span>
+                            <strong>${name}</strong>
+                        </div>
+                        <div><strong>${count} u.</strong></div>
+                    </div>
+                `;
             });
-        }
-    }
-
-    const sortedProducts = Object.entries(productCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-
-    topList.innerHTML = '';
-
-    if (sortedProducts.length === 0) {
-        topList.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-secondary);">No hay ventas registradas en esta fecha.</p>';
-        return;
-    }
-
-    sortedProducts.forEach(([name, count], index) => {
-        let badgeClass = '';
-        if (index === 0) badgeClass = 'ranking-top1';
-        else if (index === 1) badgeClass = 'ranking-top2';
-        else if (index === 2) badgeClass = 'ranking-top3';
-
-        topList.innerHTML += `
-            <div class="ranking-item">
-                <div>
-                    <span class="ranking-badge ${badgeClass}">${index + 1}</span>
-                    <strong>${name}</strong>
-                </div>
-                <div><strong>${count} u.</strong></div>
-            </div>
-        `;
-    });
-};
-
-        window.switchTab = function(tabName, element) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-
-            document.getElementById(`view-${tabName}`).classList.add('active');
-            element.classList.add('active');
         };
     </script>
 </body>
