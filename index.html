@@ -771,48 +771,102 @@
             }
         };
 
-        function renderTopProducts() {
-            const productTotals = {};
-            const todayISO = new Date().toISOString().split('T')[0];
+       // OBTENER FECHA LOCAL CORRECTA (YYYY-MM-DD)
+function getLocalDateISO() {
+    const d = new Date();
+    const offset = d.getTimezoneOffset() * 60000;
+    return new Date(d.getTime() - offset).toISOString().split('T')[0];
+}
 
-            for (let key in sales) {
-                const sale = sales[key];
-                const saleISO = extractISODate(sale);
+const todayIso = getLocalDateISO();
+document.getElementById('history-date-filter').value = todayIso;
 
-                // Contar solo las ventas de la fecha de HOY
-                if (saleISO === todayISO && sale.items) {
-                    sale.items.forEach(item => {
-                        productTotals[item.name] = (productTotals[item.name] || 0) + item.qty;
-                    });
-                }
-            }
+// AL CAMBIAR LA FECHA EN EL FILTRO, ACTUALIZA AMBOS REPORTES
+window.renderSalesHistory = function() {
+    const historyList = document.getElementById('sales-history-list');
+    const dayTotalDisplay = document.getElementById('day-total-display');
+    const selectedDate = document.getElementById('history-date-filter').value;
 
-            const sorted = Object.entries(productTotals).sort((a, b) => b[1] - a[1]);
-            const container = document.getElementById('top-products-list');
-            container.innerHTML = '';
+    historyList.innerHTML = '';
+    let dayTotal = 0;
 
-            if (sorted.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-secondary); font-size:0.85rem;">Aún no hay ventas el día de hoy.</p>';
-                return;
-            }
+    for (let key in sales) {
+        const sale = sales[key];
+        const saleDateISO = sale.dateISO || (sale.date ? sale.date.split(',')[0] : '');
 
-            sorted.slice(0, 5).forEach(([name, qty], index) => {
-                let badgeClass = '';
-                if (index === 0) badgeClass = 'ranking-top1';
-                else if (index === 1) badgeClass = 'ranking-top2';
-                else if (index === 2) badgeClass = 'ranking-top3';
+        if (selectedDate && saleDateISO !== selectedDate) {
+            continue;
+        }
 
-                container.innerHTML += `
-                    <div class="ranking-item">
-                        <div>
-                            <span class="ranking-badge ${badgeClass}">${index + 1}</span>
-                            <strong>${name}</strong>
-                        </div>
-                        <div><strong>${qty}</strong> unid.</div>
-                    </div>
-                `;
+        dayTotal += sale.total || 0;
+
+        let itemsHTML = '';
+        if (sale.items && Array.isArray(sale.items)) {
+            itemsHTML = sale.items.map(i => `${i.name} (x${i.qty}) - $${i.price.toFixed(2)}`).join('<br>');
+        }
+
+        historyList.innerHTML += `
+            <tr>
+                <td>
+                    <strong>${sale.time || sale.date || 'Hora N/A'}</strong>
+                    <div class="sale-item-detail">${itemsHTML}</div>
+                </td>
+                <td><strong>$${(sale.total || 0).toFixed(2)}</strong></td>
+            </tr>
+        `;
+    }
+
+    dayTotalDisplay.innerHTML = `Total del día (${selectedDate || 'Todo'}): <strong>$${dayTotal.toFixed(2)}</strong>`;
+    
+    // Llamamos a renderTopProducts para que el Top 5 cambie según el día seleccionado
+    renderTopProducts();
+};
+
+window.renderTopProducts = function() {
+    const topList = document.getElementById('top-products-list');
+    // Toma la fecha del filtro activo o la fecha de hoy
+    const selectedDate = document.getElementById('history-date-filter').value || getLocalDateISO();
+    const productCounts = {};
+
+    for (let key in sales) {
+        const sale = sales[key];
+        const saleDateISO = sale.dateISO || (sale.date ? sale.date.split(',')[0] : '');
+
+        if (saleDateISO === selectedDate && sale.items) {
+            sale.items.forEach(item => {
+                productCounts[item.name] = (productCounts[item.name] || 0) + item.qty;
             });
         }
+    }
+
+    const sortedProducts = Object.entries(productCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+    topList.innerHTML = '';
+
+    if (sortedProducts.length === 0) {
+        topList.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-secondary);">No hay ventas registradas en esta fecha.</p>';
+        return;
+    }
+
+    sortedProducts.forEach(([name, count], index) => {
+        let badgeClass = '';
+        if (index === 0) badgeClass = 'ranking-top1';
+        else if (index === 1) badgeClass = 'ranking-top2';
+        else if (index === 2) badgeClass = 'ranking-top3';
+
+        topList.innerHTML += `
+            <div class="ranking-item">
+                <div>
+                    <span class="ranking-badge ${badgeClass}">${index + 1}</span>
+                    <strong>${name}</strong>
+                </div>
+                <div><strong>${count} u.</strong></div>
+            </div>
+        `;
+    });
+};
 
         window.switchTab = function(tabName, element) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
