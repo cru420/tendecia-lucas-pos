@@ -27,7 +27,7 @@
         h2 { font-size: 1.1rem; margin-bottom: 0.75rem; }
         .form-group { margin-bottom: 0.75rem; }
         label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
-        input, select { width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
+        input, select { width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; background-color: white; }
         button { width: 100%; padding: 0.75rem; border: none; border-radius: 6px; background-color: var(--primary); color: white; font-weight: bold; font-size: 1rem; cursor: pointer; }
         button:active { background-color: var(--primary-dark); }
         .btn-danger { background-color: var(--danger); padding: 0.4rem 0.6rem; font-size: 0.8rem; width: auto; }
@@ -54,11 +54,14 @@
 
         .sale-item-detail { font-size: 0.8rem; color: var(--text-secondary); margin-top: 3px; }
         .day-total-box { background: #ecfdf5; color: #047857; padding: 0.6rem; border-radius: 6px; font-weight: bold; text-align: right; margin-bottom: 1rem; font-size: 0.95rem; border: 1px solid #a7f3d0; }
-        .stock-badge-box { background: #e0e7ff; color: #3730a3; padding: 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.9rem; text-align: center; margin-bottom: 0.75rem; }
+        .stock-badge-box { background: #e0e7ff; color: #3730a3; padding: 0.75rem; border-radius: 6px; font-weight: bold; font-size: 0.9rem; text-align: center; margin-bottom: 0.75rem; line-height: 1.4; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 1.5rem; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
+        
+        .stock-tag { display: inline-block; background: #ffffff; padding: 2px 8px; border-radius: 4px; margin: 2px; border: 1px solid #a7f3d0; color: #065f46; font-size: 0.85rem; }
+        .stock-tag.zero { border-color: #fca5a5; color: #991b1b; }
     </style>
 </head>
 <body>
@@ -76,26 +79,18 @@
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Marca</label>
-                        <input type="text" id="sale-brand" placeholder="Ej. POLO" oninput="checkSaleStock()">
+                        <select id="sale-brand" onchange="onBrandSelectChange()"></select>
                     </div>
                     <div class="form-group">
                         <label>Color</label>
-                        <input type="text" id="sale-color" placeholder="Ej. BLANCO" oninput="checkSaleStock()">
+                        <select id="sale-color" onchange="onColorSelectChange()"></select>
                     </div>
                 </div>
 
                 <div class="grid-2">
                     <div class="form-group">
-                        <label>Talla</label>
-                        <select id="sale-size" onchange="checkSaleStock()">
-                            <option value="XS">XS</option>
-                            <option value="S">S</option>
-                            <option value="M" selected>M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="XXL">XXL</option>
-                            <option value="Única">Única</option>
-                        </select>
+                        <label>Talla a llevar</label>
+                        <select id="sale-size"></select>
                     </div>
                     <div class="form-group">
                         <label>Cantidad a Vender</label>
@@ -104,7 +99,7 @@
                 </div>
 
                 <div id="stock-info" class="stock-badge-box">
-                    Stock Disponible: --
+                    Selecciona una Marca y Color
                 </div>
 
                 <button onclick="addToCart()">Agregar al Carrito</button>
@@ -137,7 +132,7 @@
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Marca</label>
-                        <input type="text" id="prod-brand" placeholder="Ej. POLO">
+                        <input type="text" id="prod-brand" placeholder="Ej. ZARA">
                     </div>
                     <div class="form-group">
                         <label>Color</label>
@@ -238,7 +233,7 @@
         </div>
     </main>
 
-    <!-- MODAL STOCK -->
+    <!-- MODALES -->
     <div id="stock-modal" class="modal">
         <div class="modal-content">
             <h3 id="modal-prod-title" style="margin-bottom: 0.5rem;">Actualizar Stock</h3>
@@ -249,7 +244,7 @@
             <div class="form-group">
                 <label>Modo de actualización:</label>
                 <select id="stock-mode" onchange="toggleStockMode()">
-                    <option value="add">➕ Sumar al stock existente (Llegó mercadería)</option>
+                    <option value="add">➕ Sumar al stock existente</option>
                     <option value="set">📝 Reemplazar/Establecer total exacto</option>
                 </select>
             </div>
@@ -266,11 +261,9 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR -->
     <div id="edit-modal" class="modal">
         <div class="modal-content">
             <h3 style="margin-bottom: 1rem;">Editar Producto</h3>
-            
             <div class="grid-2">
                 <div class="form-group">
                     <label>Marca</label>
@@ -373,7 +366,7 @@
         onValue(ref(db, 'products'), (snapshot) => {
             products = snapshot.val() || {};
             renderInventory();
-            checkSaleStock();
+            populateBrandDropdown();
             renderTopProducts();
         });
 
@@ -382,6 +375,112 @@
             renderSalesHistory();
             renderTopProducts();
         });
+
+        // POBLAR MARCAS Y COLORES DINÁMICAMENTE
+        function populateBrandDropdown() {
+            const brandSelect = document.getElementById('sale-brand');
+            const currentSelectedBrand = brandSelect.value;
+            
+            const brands = new Set();
+            for (let k in products) {
+                if (products[k].brand) {
+                    brands.add(products[k].brand.toUpperCase().trim());
+                }
+            }
+
+            brandSelect.innerHTML = '<option value="">-- Seleccionar Marca --</option>';
+            brands.forEach(b => {
+                brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
+            });
+
+            if (brands.has(currentSelectedBrand)) {
+                brandSelect.value = currentSelectedBrand;
+            }
+            
+            onBrandSelectChange();
+        }
+
+        window.onBrandSelectChange = function() {
+            const selectedBrand = document.getElementById('sale-brand').value;
+            const colorSelect = document.getElementById('sale-color');
+            const currentSelectedColor = colorSelect.value;
+
+            colorSelect.innerHTML = '<option value="">-- Seleccionar Color --</option>';
+
+            if (!selectedBrand) {
+                onColorSelectChange();
+                return;
+            }
+
+            const colors = new Set();
+            for (let k in products) {
+                const item = products[k];
+                if ((item.brand || '').toUpperCase().trim() === selectedBrand) {
+                    if (item.color) {
+                        colors.add(item.color.toUpperCase().trim());
+                    }
+                }
+            }
+
+            colors.forEach(c => {
+                colorSelect.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+
+            if (colors.has(currentSelectedColor)) {
+                colorSelect.value = currentSelectedColor;
+            }
+
+            onColorSelectChange();
+        };
+
+        window.onColorSelectChange = function() {
+            const selectedBrand = document.getElementById('sale-brand').value;
+            const selectedColor = document.getElementById('sale-color').value;
+            const sizeSelect = document.getElementById('sale-size');
+            const stockInfoDiv = document.getElementById('stock-info');
+
+            sizeSelect.innerHTML = '';
+
+            if (!selectedBrand || !selectedColor) {
+                stockInfoDiv.innerHTML = 'Selecciona una Marca y un Color para ver el Stock';
+                stockInfoDiv.style.background = '#e2e8f0';
+                stockInfoDiv.style.color = '#64748b';
+                return;
+            }
+
+            // Muestra todas las tallas y stocks disponibles de esa Marca + Color
+            const sizesMap = {};
+            for (let k in products) {
+                const item = products[k];
+                const b = (item.brand || '').toUpperCase().trim();
+                const c = (item.color || '').toUpperCase().trim();
+
+                if (b === selectedBrand && c === selectedColor) {
+                    sizesMap[item.size] = item.stock;
+                }
+            }
+
+            const sizeKeys = Object.keys(sizesMap);
+
+            if (sizeKeys.length === 0) {
+                stockInfoDiv.innerHTML = 'No hay stock disponible';
+                stockInfoDiv.style.background = '#fee2e2';
+                stockInfoDiv.style.color = '#991b1b';
+                return;
+            }
+
+            let badgesHTML = '<strong>Stock por Tallas:</strong><br>';
+            sizeKeys.forEach(sz => {
+                const qty = sizesMap[sz];
+                const isZero = qty <= 0;
+                badgesHTML += `<span class="stock-tag ${isZero ? 'zero' : ''}">${sz}: <strong>${qty} u.</strong></span>`;
+                sizeSelect.innerHTML += `<option value="${sz}">${sz} (Stock: ${qty})</option>`;
+            });
+
+            stockInfoDiv.innerHTML = badgesHTML;
+            stockInfoDiv.style.background = '#d1fae5';
+            stockInfoDiv.style.color = '#065f46';
+        };
 
         window.switchTab = function(tabName, element) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -438,38 +537,6 @@
             }
             return null;
         }
-
-        window.checkSaleStock = function() {
-            const brand = document.getElementById('sale-brand').value;
-            const color = document.getElementById('sale-color').value;
-            const size = document.getElementById('sale-size').value;
-            const stockInfoDiv = document.getElementById('stock-info');
-
-            if (!brand.trim() || !color.trim()) {
-                stockInfoDiv.innerHTML = 'Ingresa Marca y Color';
-                stockInfoDiv.style.background = '#e2e8f0';
-                stockInfoDiv.style.color = '#64748b';
-                return;
-            }
-
-            const matched = findProductMatch(brand, color, size);
-
-            if (matched) {
-                stockInfoDiv.innerHTML = `Stock Disponible: <strong>${matched.stock} unidades</strong>`;
-                if (matched.stock > 0) {
-                    stockInfoDiv.style.background = '#d1fae5';
-                    stockInfoDiv.style.color = '#065f46';
-                } else {
-                    stockInfoDiv.innerHTML = 'Stock Agotado (0 unidades)';
-                    stockInfoDiv.style.background = '#fee2e2';
-                    stockInfoDiv.style.color = '#991b1b';
-                }
-            } else {
-                stockInfoDiv.innerHTML = 'Producto No Encontrado en Inventario';
-                stockInfoDiv.style.background = '#fef3c7';
-                stockInfoDiv.style.color = '#92400e';
-            }
-        };
 
         window.openStockModal = function(key) {
             activeProductKey = key;
@@ -621,8 +688,8 @@
             const size = document.getElementById('sale-size').value;
             const qty = parseInt(document.getElementById('sale-quantity').value);
 
-            if (!brand.trim() || !color.trim()) {
-                alert('Por favor escribe la Marca y el Color.');
+            if (!brand || !color || !size) {
+                alert('Por favor selecciona Marca, Color y Talla.');
                 return;
             }
 
@@ -634,7 +701,7 @@
             const matched = findProductMatch(brand, color, size);
 
             if (!matched) {
-                alert('No existe un producto registrado con esa Marca, Color y Talla.');
+                alert('No existe un producto registrado con esa combinación.');
                 return;
             }
 
@@ -707,10 +774,8 @@
             update(ref(db), updates).then(() => {
                 cart = [];
                 renderCart();
-                document.getElementById('sale-brand').value = '';
-                document.getElementById('sale-color').value = '';
                 document.getElementById('sale-quantity').value = '1';
-                checkSaleStock();
+                populateBrandDropdown();
                 alert('¡Venta registrada con éxito!');
             });
         };
