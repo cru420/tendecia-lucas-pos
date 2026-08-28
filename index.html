@@ -6,48 +6,38 @@
     <title>POS Tienda - Tendencia Lucas</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f6f9; color: #333; padding-bottom: 70px; }
+        body { background-color: #f8fafc; color: #1e293b; padding-bottom: 70px; }
         
-        /* Encabezado */
-        header { background-color: #ffffff; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
+        header { background-color: #ffffff; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; }
         header h1 { font-size: 20px; color: #4f46e5; font-weight: 800; }
 
         .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
 
-        /* Contenedores de Secciones */
-        .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .card h3 { font-size: 16px; margin-bottom: 15px; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .card h3 { font-size: 16px; margin-bottom: 15px; color: #0f172a; font-weight: 700; }
 
-        /* Formularios y Selects */
         .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; background-color: #fff; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 6px; }
+        input, select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; background-color: #fff; }
         input:focus, select:focus { border-color: #4f46e5; }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        /* Botones */
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; transition: background 0.2s; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; }
         .btn-primary { background: #4f46e5; color: white; }
-        .btn-primary:hover { background: #4338ca; }
         .btn-success { background: #10b981; color: white; }
-        .btn-success:hover { background: #059669; }
-        .btn-danger { background: #ef4444; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; width: auto; }
+        .btn-danger { background: #ef4444; color: white; padding: 4px 8px; border-radius: 6px; font-size: 12px; width: auto; }
 
-        /* Tablas */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; }
-        th { background-color: #f8fafc; color: #64748b; font-weight: 600; }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #f1f5f9; }
+        th { color: #64748b; font-weight: 600; }
 
-        /* Totales */
         .total-box { text-align: right; margin-top: 15px; font-size: 18px; font-weight: 800; color: #0f172a; }
 
-        /* Navegación Inferior (Barra de Menú) */
         .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; border-top: 1px solid #e2e8f0; height: 60px; z-index: 100; }
-        .nav-item { flex: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: #64748b; cursor: pointer; text-decoration: none; border-top: 3px solid transparent; }
-        .nav-item.active { color: #4f46e5; border-top-color: #4f46e5; background-color: #f8fafc; }
+        .nav-item { flex: 1; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #64748b; cursor: pointer; border-top: 3px solid transparent; }
+        .nav-item.active { color: #4f46e5; border-top-color: #4f46e5; }
 
-        /* Ocultar secciones inactivas */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     </style>
@@ -60,18 +50,17 @@
 
     <div class="container">
 
-        <!-- ================= PESTAÑA: VENDER ================= -->
+        <!-- VENDER -->
         <div id="tabVender" class="tab-content active">
             
-            <!-- 1. Seleccionar Producto -->
             <div class="card">
                 <h3>1. Seleccionar Producto</h3>
                 
                 <div class="grid-2 form-group">
                     <div>
-                        <label>Marca / Producto</label>
+                        <label>Marca</label>
                         <select id="selectMarca" onchange="actualizarOpcionesColores()">
-                            <option value="">Selecciona una marca...</option>
+                            <option value="">Selecciona marca...</option>
                         </select>
                     </div>
                     <div>
@@ -98,7 +87,6 @@
                 <button class="btn btn-primary" onclick="agregarAlCarrito()">Agregar al Carrito</button>
             </div>
 
-            <!-- 2. Detalle de Venta -->
             <div class="card">
                 <h3>2. Detalle de Venta</h3>
                 <table>
@@ -108,7 +96,7 @@
                             <th>Cant</th>
                             <th>Precio C/U</th>
                             <th>Subt</th>
-                            <th>Acción</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="tablaCarrito">
@@ -117,7 +105,7 @@
                 </table>
 
                 <div class="total-box">
-                    Total: Bs. <span id="totalCarrito">0.00</span>
+                    Total: $<span id="totalCarrito">0.00</span>
                 </div>
 
                 <button class="btn btn-success" style="margin-top: 15px;" onclick="registrarVenta()">Registrar Venta</button>
@@ -125,15 +113,13 @@
 
         </div>
 
-
-        <!-- ================= PESTAÑA: INVENTARIO ================= -->
+        <!-- INVENTARIO -->
         <div id="tabInventario" class="tab-content">
-            
             <div class="card">
                 <h3>Agregar Producto al Inventario</h3>
                 <div class="grid-2 form-group">
                     <div>
-                        <label>Marca / Producto</label>
+                        <label>Marca</label>
                         <input type="text" id="invMarca" placeholder="Ej. POLO">
                     </div>
                     <div>
@@ -147,47 +133,41 @@
                         <input type="text" id="invTalla" placeholder="Ej. M">
                     </div>
                     <div>
-                        <label>Precio (Bs.)</label>
+                        <label>Precio ($)</label>
                         <input type="number" id="invPrecio" placeholder="100">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Cantidad (Stock Initial)</label>
+                    <label>Cantidad (Stock)</label>
                     <input type="number" id="invStock" placeholder="10">
                 </div>
                 <button class="btn btn-primary" onclick="guardarNuevoProducto()">Guardar en Inventario</button>
             </div>
 
             <div class="card">
-                <h3>Stock Actual</h3>
+                <h3>Inventario Disponible</h3>
                 <table>
                     <thead>
                         <tr>
-                            <th>Producto</th>
+                            <th>Marca</th>
                             <th>Color / Talla</th>
                             <th>Precio</th>
                             <th>Stock</th>
                         </tr>
                     </thead>
-                    <tbody id="tablaInventario">
-                        <!-- Se llena dinámicamente -->
-                    </tbody>
+                    <tbody id="tablaInventario"></tbody>
                 </table>
             </div>
-
         </div>
 
     </div>
 
-    <!-- Menú de Navegación Inferior -->
     <nav class="nav-bottom">
         <div class="nav-item active" onclick="cambiarPestaña('tabVender', this)">Vender</div>
         <div class="nav-item" onclick="cambiarPestaña('tabInventario', this)">Inventario</div>
     </nav>
 
-    <!-- LÓGICA JAVASCRIPT -->
     <script>
-        // Datos Iniciales de Ejemplo
         let inventario = JSON.parse(localStorage.getItem('pos_inventario')) || [
             { id: 1, marca: "POLO", color: "BLANCO", talla: "M", precio: 120, stock: 10 },
             { id: 2, marca: "POLO", color: "NEGRO", talla: "L", precio: 120, stock: 5 },
@@ -196,13 +176,11 @@
 
         let carrito = [];
 
-        // Inicializar aplicación
         document.addEventListener("DOMContentLoaded", () => {
             actualizarTablaInventario();
             cargarMarcas();
         });
 
-        // NAVEGACIÓN ENTRE PESTAÑAS
         function cambiarPestaña(tabId, elemento) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -215,11 +193,9 @@
             }
         }
 
-        // ================= SISTEMA DE FILTRADO (MARCA -> COLOR -> TALLA) =================
-
         function cargarMarcas() {
             const selectMarca = document.getElementById('selectMarca');
-            selectMarca.innerHTML = '<option value="">Selecciona una marca...</option>';
+            selectMarca.innerHTML = '<option value="">Selecciona marca...</option>';
             
             const marcas = [...new Set(inventario.map(item => item.marca))];
             
@@ -232,7 +208,6 @@
                 }
             });
 
-            // Reiniciar selectores dependientes
             actualizarOpcionesColores();
         }
 
@@ -293,8 +268,6 @@
             selectTalla.disabled = false;
         }
 
-        // ================= GESTIÓN DEL CARRITO =================
-
         function agregarAlCarrito() {
             const marca = document.getElementById('selectMarca').value;
             const color = document.getElementById('selectColor').value;
@@ -320,7 +293,6 @@
                 return;
             }
 
-            // Agregar al carrito
             carrito.push({
                 id: productoEncontrado.id,
                 producto: `${marca} (${color} - ${talla})`,
@@ -349,8 +321,8 @@
                     <tr>
                         <td>${item.producto}</td>
                         <td>${item.cantidad}</td>
-                        <td>Bs. ${item.precio}</td>
-                        <td>Bs. ${item.subtotal}</td>
+                        <td>$${item.precio}</td>
+                        <td>$${item.subtotal}</td>
                         <td><button class="btn-danger" onclick="eliminarDelCarrito(${index})">X</button></td>
                     </tr>
                 `;
@@ -370,7 +342,6 @@
                 return;
             }
 
-            // Descontar del inventario
             carrito.forEach(item => {
                 const prodIndex = inventario.findIndex(p => p.id === item.id);
                 if (prodIndex !== -1) {
@@ -378,7 +349,6 @@
                 }
             });
 
-            // Guardar cambios
             localStorage.setItem('pos_inventario', JSON.stringify(inventario));
             carrito = [];
             
@@ -386,10 +356,8 @@
             actualizarTablaInventario();
             cargarMarcas();
             
-            alert("¡Venta registrada con éxito!");
+            alert("¡Venta registrada exitosamente!");
         }
-
-        // ================= GESTIÓN DEL INVENTARIO =================
 
         function guardarNuevoProducto() {
             const marca = document.getElementById('invMarca').value.toUpperCase().trim();
@@ -403,17 +371,13 @@
                 return;
             }
 
-            const nuevoItem = {
-                id: Date.now(),
-                marca, color, talla, precio, stock
-            };
+            const nuevoItem = { id: Date.now(), marca, color, talla, precio, stock };
 
             inventario.push(nuevoItem);
             localStorage.setItem('pos_inventario', JSON.stringify(inventario));
 
             actualizarTablaInventario();
             
-            // Limpiar inputs
             document.getElementById('invMarca').value = '';
             document.getElementById('invColor').value = '';
             document.getElementById('invTalla').value = '';
@@ -432,7 +396,7 @@
                     <tr>
                         <td><strong>${item.marca}</strong></td>
                         <td>${item.color} / ${item.talla}</td>
-                        <td>Bs. ${item.precio}</td>
+                        <td>$${item.precio}</td>
                         <td><span style="color: ${item.stock > 0 ? '#10b981' : '#ef4444'}; font-weight:bold;">${item.stock}</span></td>
                     </tr>
                 `;
